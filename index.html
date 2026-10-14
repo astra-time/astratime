@@ -259,18 +259,28 @@
     <header>
       <b>Reproductor</b>
       <span>
-        <button class="ib sm" id="yt-min" type="button" aria-label="Minimizar reproductor"></button>
-        <button class="ib sm" id="yt-close" type="button" aria-label="Cerrar reproductor"></button>
+        <button class="ib sm" id="yt-min" type="button" aria-label="Minimizar (la música sigue sonando)"></button>
+        <button class="ib sm" id="yt-close" type="button" aria-label="Cerrar y detener la reproducción"></button>
       </span>
     </header>
+    <div class="yt-main">
+      <div class="yt-frame" id="yt-frame"></div>
+      <div class="yt-side">
+        <div class="yt-info"><b id="yt-title">Sin reproducción</b><small id="yt-state" aria-live="polite"></small></div>
+        <div class="yt-ctl" id="yt-ctl">
+          <button class="ib sm" id="yt-prev" type="button" aria-label="Anterior" hidden></button>
+          <button class="ib sm" id="yt-toggle" type="button" aria-label="Reproducir"></button>
+          <button class="ib sm" id="yt-next" type="button" aria-label="Siguiente" hidden></button>
+        </div>
+      </div>
+    </div>
     <div class="yt-body">
       <form id="yt-form" class="addrow">
         <input type="url" id="yt-url" placeholder="Enlace de vídeo o lista" aria-label="URL de YouTube o YouTube Music" required>
         <button class="b" type="submit">Cargar</button>
       </form>
       <div class="msg" id="yt-msg" role="status"></div>
-      <div class="yt-frame" id="yt-frame"></div>
-      <p class="sub">Requiere conexión. Algunos vídeos no permiten su reproducción incrustada.</p>
+      <p class="sub">Minimizar mantiene la reproducción; cerrar o pausar la detiene. YouTube puede mostrar anuncios, y algunos vídeos no permiten su reproducción incrustada.</p>
     </div>
   </aside>
 

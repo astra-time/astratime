@@ -8,8 +8,9 @@
     root.dataset.theme = light ? 'light' : 'dark';
     if (/^#[0-9a-f]{6}$/i.test(cfg.accent)) root.style.setProperty('--acc', cfg.accent);
     if (cfg.highContrast) root.dataset.contrast = 'high';
-    if (cfg.reduceMotion) root.dataset.motion = 'reduced';
+    if (cfg.reduceMotion || matchMedia('(prefers-reduced-motion: reduce)').matches) root.dataset.motion = 'reduced';
   } catch (e) {
     root.dataset.theme = 'dark';
   }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) root.dataset.motion = 'reduced';
 })();

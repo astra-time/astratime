@@ -274,10 +274,18 @@ legend { padding: 0 6px; font-size: .9rem; }
 .yt { position: fixed; right: 12px; bottom: calc(92px + env(safe-area-inset-bottom, 0)); width: min(340px, calc(100vw - 24px)); background: var(--surface); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 14px 40px rgba(0, 0, 0, .4); z-index: 30; overflow: hidden; }
 .yt header { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 8px 16px; }
 .yt header span { display: flex; gap: 4px; }
+.yt-main { display: grid; gap: 10px; padding: 0 14px 12px; }
+.yt-frame { aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: var(--surface2); }
+.yt-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.yt-side { display: grid; gap: 8px; min-width: 0; }
+.yt-info { display: grid; min-width: 0; }
+.yt-info b { font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.yt-info small { color: var(--mute); font-size: .76rem; min-height: 1.2em; }
+.yt-ctl { display: flex; gap: 6px; }
 .yt-body { padding: 0 14px 14px; }
-.yt.min .yt-body { height: 0; padding: 0; overflow: hidden; }
-.yt-frame { aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; margin: 10px 0; background: var(--surface2); }
-.yt-frame iframe { width: 100%; height: 100%; border: 0; }
+/* Minimizado: el reproductor sigue visible en miniatura (y por tanto activo) junto a sus controles. */
+.yt.min .yt-main { grid-template-columns: 112px 1fr; align-items: center; padding-bottom: 12px; }
+.yt.min .yt-body { display: none; }
 .dock { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0)); background: var(--dock); border-radius: 999px; padding: 6px; display: flex; gap: 4px; z-index: 20; box-shadow: 0 10px 30px rgba(0, 0, 0, .3); }
 .dock button { display: flex; align-items: center; gap: 8px; border: 0; background: none; color: #cfcfd4; font: inherit; font-size: .9rem; padding: 0 14px; height: 46px; border-radius: 999px; cursor: pointer; transition: background .2s, color .2s; }
 .dock button b { display: none; font-weight: 700; }
@@ -337,6 +345,7 @@ body.immersive .time { font-size: clamp(3.4rem, 20vw, 7.5rem); }
 .burst { position: absolute; inset: 0; pointer-events: none; }
 .burst i { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; border-radius: 50%; background: var(--acc-ui); box-shadow: 0 0 10px var(--acc-ui); animation: fly 1.3s cubic-bezier(.15, .7, .3, 1) forwards; }
 .burst i.s { width: 4px; height: 4px; }
+.burst.fixed { position: fixed; inset: auto; left: 50%; bottom: calc(112px + env(safe-area-inset-bottom, 0)); width: 0; height: 0; z-index: 65; }
 .burst .shock { position: absolute; inset: 4%; border-radius: 50%; border: 3px solid var(--acc-ui); animation: shock 1.1s ease-out forwards; }
 .ring.flash { animation: flash .9s ease-out; }
 body.running .ring-arc { animation: breathe 2.6s ease-in-out infinite; }
@@ -359,6 +368,17 @@ button.cd:hover, .chip:hover { transform: translateY(-1px); }
 @keyframes halo { 0%, 100% { opacity: .22; transform: scale(1); } 50% { opacity: .5; transform: scale(2); } }
 @keyframes ripple { from { transform: scale(1); opacity: .7; } to { transform: scale(1.65); opacity: 0; } }
 @keyframes spin { to { transform: rotate(360deg); } }
-:root[data-motion="reduced"] .stars i { animation: none !important; top: var(--y); }
-:root[data-contrast="high"] .stars { display: none; }
-:root[data-contrast="high"] .ring-arc { filter: none; }
+/* El alto contraste solo ajusta legibilidad; no activa ni desactiva animaciones. */
+:root[data-contrast="high"] .stars { opacity: .4; }
+/* Movimiento reducido (conmutador de Ajustes o preferencia del sistema): estado fijo, sin brillos ni ondas.
+   El arco y el nodo del círculo siguen indicando el progreso en su posición exacta. */
+:root[data-motion="reduced"] .stars i { animation: none !important; top: var(--y); height: var(--w); }
+:root[data-motion="reduced"] .ring-arc { filter: none; animation: none !important; }
+:root[data-motion="reduced"] .orbit, :root[data-motion="reduced"] .orb-halo { display: none; }
+:root[data-motion="reduced"] .play::before, :root[data-motion="reduced"] .play::after { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .stars i { animation: none !important; top: var(--y); height: var(--w); }
+  .ring-arc { filter: none; animation: none !important; }
+  .orbit, .orb-halo { display: none; }
+  .play::before, .play::after { display: none; }
+}

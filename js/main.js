@@ -19,7 +19,7 @@ import { initMusic } from './music.js';
 import { initDrive } from './drive.js';
 import { initBackup } from './backup.js';
 import { initSettings, applySettings, renderTags } from './settings.js';
-import { initFx } from './fx.js';
+import { initFx, celebrate } from './fx.js';
 
 const VIEWS = ['timer', 'panel', 'goals', 'set'];
 let view = 'timer';
@@ -57,7 +57,7 @@ const refresh = debounce(() => {
   renderView();
   refreshOpenDay();
   if (!document.activeElement?.closest('#v-set input, #v-set select')) applySettings();
-  for (const badge of checkBadges()) toast(`Hito desbloqueado: ${badge.name}`);
+  for (const badge of checkBadges()) { toast(`Hito desbloqueado: ${badge.name}`); celebrate(); }
 }, 80);
 
 function pickTag(tag) {

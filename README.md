@@ -36,11 +36,11 @@ No hay cuentas de usuario, servidor ni telemetría. Los datos permanecen en el n
 - Círculo de progreso con el color del tema: el arco se llena con el acento elegido y un nodo orbital (el mismo motivo que el logotipo) marca el avance.
 - Animaciones ambientales: lluvia de estrellas lenta de fondo, resplandor y órbita giratoria alrededor del círculo durante el enfoque, ondas en el botón de pausa, destello con partículas y onda expansiva al completar una sesión, y estrella fugaz ocasional. Se desactivan con *Reducir animaciones*.
 - Modo claro, oscuro o automático; color de acento seleccionable o personalizado, persistente en `localStorage`.
-- Opciones de reducción de animaciones y de alto contraste (además de respetar `prefers-reduced-motion` y `prefers-contrast`).
+- Las animaciones están activas por defecto en escritorio y móvil, sin restricciones por tamaño de pantalla. Solo dos cosas las desactivan: el conmutador *Reducir animaciones* de Ajustes y la preferencia `prefers-reduced-motion` del sistema. En ese modo, el arco, el nodo del círculo y el resto de estados visuales se mantienen fijos, sin brillos ni ondas ni destellos. El alto contraste no modifica las animaciones.
 - Navegación por teclado, etiquetas ARIA, diálogos nativos `<dialog>`, regiones `aria-live` y enlace de salto al contenido.
 
 **Otros**
-- Reproductor embebido de YouTube y YouTube Music (URL de vídeo o lista; la última se conserva localmente).
+- Reproductor embebido de YouTube y YouTube Music (URL de vídeo o lista), controlado con la IFrame Player API. Minimizar la ventana mantiene la reproducción (queda en miniatura con pausa, anterior y siguiente); cerrarla o pausarlo la detiene. La última URL se conserva localmente.
 - Exportación e importación de copias en JSON y copia de seguridad opcional en Google Drive.
 
 ## Arquitectura
@@ -169,7 +169,7 @@ La verificación se realizó con pruebas automatizadas de extremo a extremo en C
 
 - Los navegadores pueden ralentizar los temporizadores de pestañas en segundo plano; el cómputo del tiempo es correcto, pero el aviso puede retrasarse. Las notificaciones con la aplicación cerrada no están soportadas.
 - La Screen Wake Lock API y las notificaciones dependen de la compatibilidad del navegador.
-- Algunos vídeos de YouTube no permiten la reproducción incrustada.
+- Algunos vídeos de YouTube no permiten la reproducción incrustada. Los anuncios que YouTube sirve dentro del reproductor incrustado no pueden eliminarse desde la aplicación.
 - El token de Google Drive no se renueva en silencio (limitación del flujo de token sin servidor).
 - Las etiquetas eliminadas en un dispositivo no se eliminan en los demás.
 - Borrar los datos del navegador elimina el historial local si no existe una copia exportada o en Drive.
