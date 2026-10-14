@@ -1,147 +1,69 @@
 # AstraTime
 
-Aplicación web progresiva (PWA) de temporizador Pomodoro con registro de horas de estudio, etiquetas, planificación por bloques, tareas, estadísticas, calendario de actividad editable e hitos personales. Funciona íntegramente en el cliente, sin servidor propio, y es instalable y utilizable sin conexión.
+**Temporizador Pomodoro con registro de horas de estudio.** Funciona en el navegador, se instala como una aplicación en el móvil y en el ordenador, no necesita cuenta y guarda tus datos en tu propio dispositivo.
 
-## Propósito y alcance
+<p align="center">
+  <img src="docs/temporizador.png" alt="Temporizador con el círculo de progreso en el color del tema" width="190">
+  <img src="docs/panel.png" alt="Panel de estadísticas con el objetivo diario y los últimos siete días" width="190">
+  <img src="docs/calendario.png" alt="Calendario de actividad por mes" width="190">
+  <img src="docs/logros.png" alt="Cielo de estrellas e hitos personales" width="190">
+</p>
 
-AstraTime se desarrolló para uso personal: llevar un registro transparente y fiable de las horas de estudio y organizar el tiempo de trabajo. El código se publica de forma abierta para que cualquier persona pueda usarlo, adaptarlo o alojarlo por su cuenta.
+## Qué es y para qué sirve
 
-No hay cuentas de usuario, servidor ni telemetría. Los datos permanecen en el navegador salvo que el usuario exporte una copia o active de forma expresa la sincronización con Google Drive.
+La técnica Pomodoro consiste en trabajar en bloques de tiempo concentrado (por defecto, 25 minutos) separados por descansos cortos (5 minutos). Tras varios bloques (por defecto, 4) se hace un descanso largo (15 minutos).
 
-## Funcionalidades
+AstraTime aplica esa técnica y, además, **registra cuánto tiempo estudias y en qué**. Cada sesión de enfoque se guarda con su hora de inicio, su duración y una etiqueta (por ejemplo, el nombre de una asignatura). Con ese registro la aplicación calcula tus totales por día, semana, mes y año, te muestra un calendario de actividad y te ayuda a planificar tus bloques de estudio.
 
-**Temporizador**
-- Duraciones configurables de enfoque, pausa corta y pausa larga, y número de sesiones hasta la pausa larga.
-- Inicio automático opcional de la siguiente fase y hora estimada de finalización.
-- Tiempo restante en el título de la pestaña (por ejemplo, `24:59 - AstraTime`) y favicon dinámico que cambia de color según el estado: enfoque, descanso o pausa.
-- Pantalla activa durante el temporizador mediante la Screen Wake Lock API (opcional).
-- Modo inmersivo: oculta la interfaz y deja únicamente el temporizador y la etiqueta actual.
-- Acciones rápidas: repetir la última sesión, cambiar de etiqueta e iniciar un preset con un solo clic.
+Nació como herramienta personal para llevar un control transparente de las horas de estudio y organizarse mejor. El código es abierto, por si resulta útil a más gente.
 
-**Registro, planificación y tareas**
-- Etiquetas definidas por el usuario, asignadas a cada sesión de enfoque.
-- Planes por bloques de objetivos globales (por ejemplo, 60 min de una materia seguidos de 30 min de otra). Si un bloque no se completa, se ofrece una sesión extra vinculada a la misma etiqueta. Los planes pueden guardarse como presets.
-- Tareas con tiempo estimado frente a tiempo real. Las tareas pendientes se recuperan automáticamente al iniciar una sesión con la etiqueta correspondiente.
-- Cierre inteligente de sesión (opcional): pregunta si la tarea se completó y si se desea descansar, continuar o detenerse.
+## Empezar en un minuto
 
-**Estadísticas y progreso**
-- Totales por día, semana, mes y año; objetivo diario; gráfico de los últimos siete días; desglose por etiqueta.
-- Calendario de actividad con vista mensual (cuadrícula amplia) y anual (cuadrícula semanal compacta), navegación por mes y año y filtro por etiqueta. La fecha y el tiempo de cada día aparecen al pasar el cursor o al mantenerlo pulsado en pantallas táctiles; un toque breve abre el resumen del día.
-- Edición del historial: se puede corregir la etiqueta, la duración y la fecha de una sesión, añadir sesiones manuales y eliminarlas. Las métricas se recalculan a partir de las sesiones.
-- Contador de rachas desactivable.
-- Hitos personales no competitivos (sesiones completadas, horas acumuladas, etiquetas distintas, constancia semanal, entre otros).
-- Composición visual de progreso: cada sesión completada añade una estrella a un cielo; cada siete estrellas se cierra una constelación.
+1. Abre la aplicación en el navegador (ver [Publicar tu propia copia](#publicar-tu-propia-copia)). Si quieres, instálala: en Chrome o Edge aparece un icono de instalar en la barra de direcciones; en Android, menú > *Instalar aplicación*; en iPhone, Safari > *Compartir* > *Añadir a pantalla de inicio*.
+2. Pulsa el botón de **play**. El círculo se va llenando con el color del tema y suena un aviso al terminar.
+3. Para registrar en qué estudias, pulsa la etiqueta de arriba y elige una (las creas en *Ajustes > Etiquetas*).
+4. Entra en **Panel** para ver tus horas y en **Logros** para ver tu progreso.
 
-**Interfaz y accesibilidad**
-- Círculo de progreso con el color del tema: el arco se llena con el acento elegido y un nodo orbital (el mismo motivo que el logotipo) marca el avance.
-- Animaciones ambientales, activas por defecto también en reposo: lluvia de estrellas diagonal cuyo tamaño y densidad se escalan con la pantalla, órbita punteada y halo del nodo en el círculo, resplandor y ondas durante el enfoque, elevación de botones y tarjetas al pasar el cursor, destello con partículas y onda expansiva al completar una sesión, destello al desbloquear un hito y estrella fugaz ocasional.
-- Modo claro, oscuro o automático; color de acento seleccionable o personalizado, persistente en `localStorage`.
-- Las animaciones están activas por defecto en escritorio y móvil, sin restricciones por tamaño de pantalla. Solo dos cosas las desactivan: el conmutador *Reducir animaciones* de Ajustes y la preferencia `prefers-reduced-motion` del sistema. Cuando es el sistema quien la impone, Ajustes lo indica con un aviso y explica cómo cambiarlo. En ese modo, el arco, el nodo del círculo y el resto de estados visuales se mantienen fijos, sin brillos ni ondas ni destellos. El alto contraste no modifica las animaciones.
-- Navegación por teclado, etiquetas ARIA, diálogos nativos `<dialog>`, regiones `aria-live` y enlace de salto al contenido.
+Todo funciona sin conexión una vez instalada.
 
-**Otros**
-- Reproductor embebido de YouTube y YouTube Music (URL de vídeo o lista), controlado con la IFrame Player API. Minimizar la ventana mantiene la reproducción (queda en miniatura con pausa, anterior y siguiente); cerrarla o pausarlo la detiene. La última URL se conserva localmente.
-- Exportación e importación de copias en JSON y copia de seguridad opcional en Google Drive.
+## Cómo se usa cada parte
 
-## Arquitectura
+La barra inferior tiene cuatro vistas: **Timer**, **Panel**, **Logros** y **Ajustes**.
 
-Aplicación estática de HTML5, CSS3 y JavaScript con módulos ES nativos. No hay dependencias en tiempo de ejecución ni paso de compilación.
+### Timer
 
-```
-index.html              Estructura semántica y logotipo SVG en línea
-manifest.json           Metadatos de instalación PWA
-sw.js                   Service worker (precarga y estrategia cache-first)
-css/styles.css          Tokens de diseño, componentes, vistas y modos de accesibilidad
-fonts/                  Space Grotesk (variable, latin) y licencia OFL
-icons/                  Logotipo e iconos de la aplicación
-js/
-  boot.js               Aplicación temprana de tema y preferencias (evita parpadeos)
-  main.js               Arranque, navegación, atajos de teclado, modo inmersivo e instalación
-  data.js               Modelo de datos, persistencia y fusión de copias
-  stats.js              Agregación de tiempos (unión de intervalos), rachas y totales
-  timer.js              Motor del temporizador y registro de segmentos
-  timer-ui.js           Representación del temporizador, título y favicon
-  plans.js              Planes por bloques y presets
-  tasks.js              Tareas con tiempo estimado y real
-  closing.js            Cierre inteligente de sesión
-  panel.js              Panel de estadísticas y desglose por etiqueta
-  calendar.js           Calendario compacto, fecha al pasar el cursor, resumen diario y edición del historial
-  fx.js                 Efectos ambientales (estrellas, destello, estrella fugaz)
-  badges.js             Hitos y composición de estrellas
-  theme.js              Tema, contraste, logotipo y favicon dinámico
-  audio.js              Tonos generados con Web Audio API
-  wake.js               Screen Wake Lock API
-  music.js              Ventana flotante de YouTube
-  drive.js              Copia de seguridad en Google Drive
-  backup.js             Exportación e importación JSON
-  settings.js           Enlace de los controles de ajustes
-  dialogs.js            Diálogos, popovers, avisos y anuncios accesibles
-  bus.js, storage.js, util.js, icons.js
-```
+- **Fases:** *Enfoque*, *Pausa corta* y *Pausa larga*. Los puntos bajo el círculo marcan cuántos bloques llevas en el ciclo. Con *Saltar* pasas a la siguiente fase y con *Reiniciar* vuelves a empezar la actual.
+- **Etiqueta:** la que elijas queda asociada a cada sesión de enfoque. Puedes cambiarla en cualquier momento; si el temporizador está en marcha, la sesión se divide en dos.
+- **Tareas:** en el apartado *Tareas* anotas lo que quieres hacer, con un tiempo estimado. Al seleccionar una tarea, las sesiones se vinculan a ella y verás el tiempo real frente al estimado.
+- **Planes por bloques:** con *Presets > Nuevo plan* defines una secuencia como "60 min de Matemáticas, luego 30 min de Inglés". La aplicación va cambiando de etiqueta sola y te avisa del avance. Si un bloque se queda corto, te ofrece una **sesión extra** con la misma etiqueta. Los planes se pueden guardar como *presets* y arrancar con un solo toque.
+- **Cierre de sesión:** al terminar un bloque aparece una pregunta breve: si completaste la tarea y si quieres descansar, continuar o detenerte. Se puede desactivar en Ajustes.
+- **Acciones rápidas:** *Repetir última* (mismo tiempo y etiqueta que la última sesión), *Cambiar etiqueta* y *Presets*.
+- **Modo inmersivo:** oculta todo salvo el temporizador y la etiqueta (botón de pantalla completa de la cabecera o tecla `M`).
+- **Pantalla encendida:** mientras corre el temporizador, la pantalla no se apaga (se puede desactivar).
 
-Los módulos se comunican mediante un bus de eventos mínimo (`bus.js`): los cambios de datos emiten eventos `change:*` y la interfaz se actualiza de forma agrupada. El temporizador calcula el tiempo restante a partir de una hora de finalización absoluta, por lo que la ralentización de pestañas en segundo plano no genera deriva.
+### Panel
 
-El service worker precarga todos los recursos propios y los sirve desde caché; las peticiones a otros orígenes (Google, YouTube) no se interceptan. Al modificar cualquier archivo estático conviene incrementar la constante `CACHE` de `sw.js` para que los clientes actualicen la caché.
+- **Objetivo diario**, tiempo de **hoy** y gráfico de los **últimos 7 días**.
+- Totales de la semana, el mes y el año, sesiones completadas y **rachas** (días seguidos con estudio). Las rachas se pueden ocultar en Ajustes si prefieres no tener ese contador.
+- **Por etiqueta:** cuánto tiempo has dedicado a cada una, por día, semana, mes, año o en total.
+- **Calendario de actividad:** vista por mes o por año, con un filtro por etiqueta. Cada día se colorea según el tiempo estudiado. Pasa el cursor (o mantén pulsado en el móvil) por un día para ver su fecha y tiempo; pulsa el día para abrir su resumen. Desde ahí puedes **corregir errores**: editar la etiqueta, la duración o la fecha de una sesión, añadir una sesión manual o eliminarla. Las estadísticas se recalculan solas.
 
-## Modelo de datos y coherencia
+### Logros
 
-Todo se guarda en `localStorage` con el prefijo `astratime.` (`ses`, `cfg`, `tasks`, `presets`, `plan`, `badges`, `epoch`, `cal`, `yt`, `gcid`, `gon`). Las claves del prefijo anterior (`pomo.*`) se copian automáticamente la primera vez que se abre la aplicación.
+- **Tu cielo:** cada sesión completada añade una estrella. Cada siete estrellas se cierra una constelación.
+- **Hitos personales:** 12 hitos (primera sesión, 10, 50 y 100 sesiones, 10, 50 y 100 horas, 5 etiquetas distintas, constancia semanal, una sesión de 50 minutos, cumplir el objetivo diario y completar un plan). No hay comparaciones con otras personas.
 
-Cada sesión es una tupla `[id, inicio, fin, etiqueta, completada, tarea, bloque, actualización, borrada]`, con inicio y fin en segundos Unix y la actualización en milisegundos. Los totales no se almacenan: se calculan siempre a partir de las sesiones, de modo que editar o borrar una sesión mantiene coherentes todas las métricas.
+### Ajustes
 
-Para combinar dispositivos sin duplicar ni perder información:
-- **Identidad:** las sesiones se fusionan por `id`, de modo que importar o sincronizar varias veces no las repite.
-- **Solapes:** si dos sesiones coinciden en el tiempo (por ejemplo, registradas desde el móvil y el ordenador), el tramo coincidente se contabiliza una sola vez.
-- **Ediciones:** prevalece la versión con la marca de actualización más reciente. Esto presupone relojes de dispositivo razonablemente sincronizados.
-- **Borrados:** las sesiones eliminadas se conservan como marca de borrado para propagar el cambio. El borrado total incrementa una época (`epoch`); la época más reciente prevalece al sincronizar.
+Duración de cada fase, objetivo diario, inicio automático de la siguiente fase, cierre de sesión, pantalla encendida, avisos del navegador, contador de rachas, **apariencia** (claro, oscuro o automático; color del tema a elegir), **accesibilidad** (reducir animaciones y alto contraste), **sonido de aviso** (6 sonidos y volumen), etiquetas, presets, atajos de teclado y copias de seguridad.
 
-## Audio y recursos de terceros
+El color del tema se elige con el icono de paleta de la cabecera y se recuerda al volver a abrir la aplicación.
 
-- **Sonidos:** todos los avisos se sintetizan en el dispositivo con la Web Audio API (`OscillatorNode` y `GainNode`) a partir de frecuencias, ondas y envolventes definidas en `js/audio.js`. El proyecto no incluye ni descarga archivos de audio, por lo que no hay material de terceros sujeto a derechos.
-- **Tipografía:** Space Grotesk, autoalojada (`fonts/`), con licencia SIL Open Font License 1.1 (texto en `fonts/OFL-Space-Grotesk.txt`).
-- **Logotipo e iconos:** diseño propio en SVG; los iconos de interfaz son trazos definidos en `js/icons.js`.
-- **Servicios externos bajo demanda:** Google Identity Services y la API de Drive solo se cargan al conectar Drive; el reproductor de YouTube solo carga contenido de `youtube-nocookie.com` cuando el usuario lo abre.
+### Música
 
-## Instalación y uso
+El icono de nota musical abre un reproductor flotante: pega el enlace de un vídeo o una lista de YouTube o YouTube Music. **Minimizarlo** mantiene la música sonando; **cerrarlo o pausarlo** la detiene. YouTube puede mostrar anuncios dentro del reproductor, y la aplicación no puede eliminarlos.
 
-Los módulos ES, el service worker y el inicio de sesión de Google requieren HTTPS o `localhost`; no funcionan al abrir `index.html` directamente desde el sistema de archivos.
-
-```bash
-python3 -m http.server 8000
-# abrir http://localhost:8000
-```
-
-**Publicación en GitHub Pages**
-
-```bash
-git init -b main
-git add .
-git commit -m "AstraTime: versión inicial"
-git remote add origin https://github.com/<usuario>/<repositorio>.git
-git push -u origin main
-```
-
-Después, en el repositorio: *Settings > Pages > Build and deployment*, origen *Deploy from a branch*, rama `main` y carpeta `/ (root)`. La aplicación quedará disponible en `https://<usuario>.github.io/<repositorio>/`. Todas las rutas son relativas, por lo que funciona bajo ese subdirectorio.
-
-**Instalación como aplicación:** Chrome y Edge (icono de instalación en la barra de direcciones o botón en Ajustes), Android (menú > *Instalar aplicación*), iOS (Safari > *Compartir* > *Añadir a pantalla de inicio*). Una vez instalada, funciona sin conexión.
-
-## Copia de seguridad
-
-**Exportar e importar.** *Ajustes > Copia del historial* genera y lee un archivo JSON con sesiones, tareas, presets y configuración. La importación añade contenido y no sustituye el existente.
-
-**Google Drive.** La sincronización usa Google Identity Services (flujo de token en el navegador) y la API de Drive v3 con el ámbito `https://www.googleapis.com/auth/drive.appdata`, que limita el acceso a una carpeta oculta de la aplicación (`appDataFolder`). El archivo `astratime-backup.json` no aparece en el Drive del usuario y la aplicación no puede leer ningún otro archivo.
-
-Configuración (una sola vez):
-
-1. Crear un proyecto en [Google Cloud Console](https://console.cloud.google.com/).
-2. Habilitar **Google Drive API** en *APIs y servicios > Biblioteca*.
-3. Configurar la *Pantalla de consentimiento de OAuth* (usuario *Externo*), añadir el ámbito `.../auth/drive.appdata` y, mientras esté en modo *Testing*, la cuenta propia como usuario de prueba.
-4. Crear un *ID de cliente de OAuth* de tipo *Aplicación web* con el dominio de la aplicación como origen de JavaScript autorizado (por ejemplo `https://<usuario>.github.io` o `http://localhost:8000`). No se requiere URI de redireccionamiento.
-5. Pegar el ID de cliente en *Ajustes > Copia de seguridad en Google Drive* y pulsar *Conectar y sincronizar*.
-
-El token de acceso dura aproximadamente una hora; mientras esté activo, la sincronización se repite tras cada cambio. Después basta con pulsar de nuevo *Sincronizar ahora*. El ID de cliente no es un secreto, pero se guarda solo en el navegador del usuario.
-
-## Atajos de teclado
+### Atajos de teclado
 
 | Tecla | Acción |
 |---|---|
@@ -152,28 +74,101 @@ El token de acceso dura aproximadamente una hora; mientras esté activo, la sinc
 | `T` | Siguiente etiqueta |
 | `1`–`4` | Cambiar de vista |
 
-## Privacidad
+## Tus datos
 
-- No existe backend ni analítica.
-- Sin Google Drive ni YouTube, ningún dato sale del navegador.
-- Con Google Drive, los datos se envían únicamente a la carpeta `appDataFolder` de la cuenta del propio usuario.
-- El reproductor de YouTube transmite a YouTube las peticiones propias del contenido incrustado.
+- **Dónde se guardan:** en tu propio dispositivo (en el almacenamiento local del navegador). No hay servidor, cuentas ni estadísticas de uso.
+- **Copia de seguridad en un archivo:** *Ajustes > Copia del historial* permite **exportar** todo a un archivo e **importarlo** en otro dispositivo.
+- **Copia en Google Drive (opcional):** sincroniza el historial entre dispositivos usando una carpeta oculta de tu propio Drive que solo AstraTime puede leer. Requiere crear un identificador de Google una sola vez (ver más abajo).
+- **Móvil y ordenador a la vez:** al combinar dispositivos, las sesiones no se duplican, y si dos sesiones coinciden en el tiempo, ese tramo se cuenta una sola vez. Si editas la misma sesión en dos sitios, prevalece el cambio más reciente.
+- **Si borras los datos del navegador**, el historial local se pierde. Exporta una copia de vez en cuando.
 
-## Metodología de desarrollo
+## Preguntas frecuentes
 
-La idea, los requisitos funcionales y de diseño, y la dirección del proyecto son de la autora. El código fuente ha sido generado con la asistencia de inteligencia artificial (Claude, de Anthropic), a partir de especificaciones y revisiones iterativas definidas por la autora.
+**¿Funciona sin internet?** Sí, una vez abierta por primera vez. Solo necesitan conexión el reproductor de YouTube y la copia en Drive.
 
-La verificación se realizó con pruebas automatizadas de extremo a extremo en Chromium sin interfaz (temporizador, planes, tareas, calendario y edición, sincronización simulada con Drive, modo sin conexión), que no se incluyen en el repositorio. Se recomienda revisar el código antes de confiarle datos que no se puedan reponer.
+**¿Por qué no veo las animaciones?** Si tu sistema tiene activada la reducción de movimiento, AstraTime la respeta y las desactiva. Ajustes lo indica con un aviso y explica cómo cambiarlo. También puedes desactivarlas tú con *Reducir animaciones*.
 
-## Limitaciones conocidas
+**¿Suena el aviso con la pantalla bloqueada?** Depende del navegador: los móviles pueden frenar las pestañas en segundo plano. El tiempo se calcula bien, pero el aviso puede retrasarse. Con la aplicación cerrada no hay avisos.
 
-- Los navegadores pueden ralentizar los temporizadores de pestañas en segundo plano; el cómputo del tiempo es correcto, pero el aviso puede retrasarse. Las notificaciones con la aplicación cerrada no están soportadas.
-- La Screen Wake Lock API y las notificaciones dependen de la compatibilidad del navegador.
-- Algunos vídeos de YouTube no permiten la reproducción incrustada. Los anuncios que YouTube sirve dentro del reproductor incrustado no pueden eliminarse desde la aplicación.
-- El token de Google Drive no se renueva en silencio (limitación del flujo de token sin servidor).
-- Las etiquetas eliminadas en un dispositivo no se eliminan en los demás.
-- Borrar los datos del navegador elimina el historial local si no existe una copia exportada o en Drive.
+**¿Los sonidos tienen derechos de autor?** No: se generan en el dispositivo con la Web Audio API. La aplicación no incluye archivos de audio.
+
+## Publicar tu propia copia
+
+La aplicación es un sitio estático: no necesita servidor. Con GitHub Pages se publica gratis.
+
+1. Crea un repositorio público en GitHub y sube el contenido de este proyecto (el archivo `index.html` debe quedar en la raíz).
+2. En *Settings > Pages*, elige *Deploy from a branch*, la rama `main` y la carpeta `/ (root)`.
+3. En uno o dos minutos estará en `https://<usuario>.github.io/<repositorio>/`.
+
+Para probarla en local (los módulos y el service worker requieren `http://`, no basta con abrir el archivo):
+
+```bash
+python3 -m http.server 8000
+# abrir http://localhost:8000
+```
+
+### Configurar la copia en Google Drive
+
+1. Crea un proyecto en [Google Cloud Console](https://console.cloud.google.com/) y habilita **Google Drive API**.
+2. Configura la *Pantalla de consentimiento de OAuth* (usuario *Externo*), añade el ámbito `https://www.googleapis.com/auth/drive.appdata` y, mientras esté en modo *Testing*, tu cuenta como usuario de prueba.
+3. Crea un *ID de cliente de OAuth* de tipo *Aplicación web* con el dominio de la aplicación como origen autorizado (por ejemplo, `https://<usuario>.github.io`; no hace falta URI de redireccionamiento).
+4. Pega el ID en *Ajustes > Copia de seguridad en Google Drive* y pulsa *Conectar y sincronizar*.
+
+La conexión dura aproximadamente una hora; después basta con pulsar *Sincronizar ahora*. El identificador no es secreto, pero se guarda solo en tu navegador.
+
+## Cómo está hecho
+
+Aplicación web progresiva (PWA) en **HTML, CSS y JavaScript sin dependencias ni paso de compilación**. Usa módulos ES nativos.
+
+```
+index.html          Estructura y logotipo SVG
+manifest.json       Datos de instalación como aplicación
+sw.js               Service worker: guarda los archivos para el uso sin conexión
+css/styles.css      Estilos, temas, animaciones y accesibilidad
+fonts/              Tipografía Space Grotesk (licencia OFL)
+icons/              Logotipo e iconos
+docs/               Capturas de este README
+js/
+  main.js           Arranque, navegación, atajos e instalación
+  data.js           Modelo de datos, guardado y fusión de copias
+  stats.js          Cálculo de tiempos, rachas y totales
+  timer.js          Motor del temporizador
+  timer-ui.js       Representación del temporizador, título y favicon
+  plans.js          Planes por bloques y presets
+  tasks.js          Tareas con tiempo estimado y real
+  closing.js        Cierre inteligente de sesión
+  panel.js          Panel de estadísticas
+  calendar.js       Calendario, resumen diario y edición
+  badges.js         Hitos y cielo de estrellas
+  theme.js          Tema, contraste, logotipo y favicon dinámico
+  fx.js             Animaciones ambientales
+  audio.js          Sonidos generados por código
+  music.js          Reproductor de YouTube
+  drive.js          Copia en Google Drive
+  backup.js         Exportar e importar
+  settings.js, dialogs.js, wake.js, bus.js, storage.js, util.js, icons.js, boot.js
+```
+
+**Modelo de datos.** Todo se guarda en `localStorage` con el prefijo `astratime.`. Cada sesión es un registro `[id, inicio, fin, etiqueta, completada, tarea, bloque, actualización, borrada]`. Los totales **no se guardan**: se calculan siempre a partir de las sesiones, por lo que editar o borrar una sesión mantiene coherentes todas las estadísticas. Para combinar dispositivos, las sesiones se identifican por `id`, el tiempo coincidente se une en intervalos (se cuenta una sola vez), prevalece la edición más reciente y los borrados se propagan mediante marcas de borrado y una época de borrado total. Esto presupone que los relojes de los dispositivos están razonablemente sincronizados.
+
+**Tiempo.** El temporizador calcula el tiempo restante a partir de una hora de finalización absoluta, de modo que ralentizar la pestaña en segundo plano no genera deriva.
+
+**Sin conexión.** El service worker guarda todos los archivos propios (estrategia *cache-first*). Al cambiar cualquier archivo conviene subir la versión de `CACHE` en `sw.js` para que los dispositivos actualicen. Las peticiones a otros orígenes (Google, YouTube) no se interceptan.
+
+**Accesibilidad.** Navegación por teclado, diálogos nativos `<dialog>`, etiquetas ARIA, anuncios para lectores de pantalla, modo de alto contraste y reducción de animaciones (conmutador propio y preferencia `prefers-reduced-motion` del sistema). Las animaciones están activas por defecto en cualquier tamaño de pantalla; solo esos dos controles las desactivan.
+
+**Recursos de terceros.** Tipografía Space Grotesk autoalojada (licencia SIL OFL 1.1, en `fonts/OFL-Space-Grotesk.txt`). Los logotipos e iconos son propios. Google Identity Services y la API de Drive solo se cargan al conectar Drive, y el contenido de YouTube solo al abrir el reproductor.
+
+**Limitaciones.** Los navegadores pueden frenar las pestañas en segundo plano. Algunos vídeos de YouTube no permiten la reproducción incrustada. El permiso de acceso a Drive caduca en torno a una hora. Las etiquetas eliminadas en un dispositivo no se eliminan en los demás.
+
+## Cómo se ha desarrollado
+
+La idea, los requisitos y la dirección del proyecto son de la autora. El código ha sido generado con la asistencia de inteligencia artificial (Claude, de Anthropic), a partir de especificaciones y revisiones iterativas definidas por la autora.
+
+Se verificó con pruebas automatizadas de extremo a extremo en Chromium sin interfaz (temporizador, planes, tareas, calendario y edición, sincronización simulada con Drive, reproductor simulado, modo sin conexión y accesibilidad), que no se incluyen en el repositorio. Como cualquier software de uso personal, se ofrece sin garantías: conviene revisar el código antes de confiarle datos que no puedas reponer.
 
 ## Licencia
 
-MIT. Debe añadirse al repositorio un archivo `LICENSE` con el texto de la licencia y el titular de los derechos.
+Este proyecto se publica bajo la **licencia MIT** (archivo [`LICENSE`](LICENSE)). En palabras sencillas: cualquier persona puede usar, copiar, modificar y compartir el código, también en proyectos propios o comerciales, siempre que conserve el aviso de copyright y la licencia. El software se ofrece "tal cual", sin garantía de ningún tipo.
+
+La tipografía Space Grotesk conserva su propia licencia (SIL Open Font License 1.1), incluida en `fonts/`.
