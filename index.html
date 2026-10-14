@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="AstraTime: temporizador Pomodoro con registro de horas de estudio, etiquetas, planes por bloques y estadísticas.">
+  <title>AstraTime</title>
+  <link rel="manifest" href="manifest.json">
+  <link id="favicon" rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <script src="js/boot.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <a class="skip" href="#main">Ir al contenido</a>
+
+  <header class="top">
+    <h1 class="brand">
+      <!-- Logotipo: arco de 270° con nodos en los extremos y aguja horizontal hasta el nodo central. Hereda el color de `currentColor`. -->
+      <svg class="logo" viewBox="0 0 48 48" width="30" height="30" role="img" aria-label="Logotipo de AstraTime" focusable="false">
+        <path d="M24 7A17 17 0 1 1 7 24" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <path d="M7 24H24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+        <g fill="currentColor"><circle cx="24" cy="7" r="4.4"/><circle cx="7" cy="24" r="4.4"/><circle cx="24" cy="24" r="4"/></g>
+      </svg>
+      <span>AstraTime</span>
+    </h1>
+    <div class="clock"><b id="clock">--:--:--</b><span class="sub" id="date"></span></div>
+    <div class="hr">
+      <button class="ib" id="btn-music" type="button" data-icon="music" aria-label="Reproductor de música" aria-expanded="false"></button>
+      <button class="ib" id="btn-immersive" type="button" data-icon="expand" aria-label="Modo inmersivo (M)" aria-pressed="false"></button>
+      <button class="ib" id="btn-mode" type="button" aria-label="Cambiar entre modo claro y oscuro"></button>
+      <button class="ib" id="btn-palette" type="button" data-icon="palette" aria-label="Color del tema" aria-haspopup="dialog" aria-expanded="false"></button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Temporizador -->
+    <section id="v-timer" class="tv" aria-label="Temporizador">
+      <div id="plan-strip" class="plan-strip" hidden></div>
+      <button class="task" id="taskbtn" type="button" aria-expanded="false" aria-controls="tagpick">
+        <span class="td" data-icon="tag" data-size="20"></span>
+        <span class="tt"><b id="taskn">General</b><small id="tasks-sub">Etiqueta de la sesión</small></span>
+      </button>
+      <div class="chips" id="tagpick" hidden aria-label="Elegir etiqueta"></div>
+
+      <div class="tabs" id="tabs" role="tablist" aria-label="Fase del temporizador">
+        <button type="button" role="tab" data-m="focus" aria-selected="true">Enfoque</button>
+        <button type="button" role="tab" data-m="short" aria-selected="false">Pausa corta</button>
+        <button type="button" role="tab" data-m="long" aria-selected="false">Pausa larga</button>
+      </div>
+
+      <div class="ring" id="ring">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle cx="110" cy="110" r="108.5" fill="none" class="orbit" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="1 9"/>
+          <circle cx="110" cy="110" r="100" fill="none" class="ring-track" stroke-width="6"/>
+          <circle id="arc" cx="110" cy="110" r="100" fill="none" class="ring-arc" stroke-width="6" stroke-linecap="round" stroke-dasharray="628.32" stroke-dashoffset="628.32"/>
+          <g id="orb" class="orb"><circle class="orb-halo" cx="210" cy="110" r="16"/><circle class="orb-dot" cx="210" cy="110" r="7.5"/></g>
+        </svg>
+        <div class="t"><div class="time" id="time" role="timer" aria-live="off">25:00</div><div class="sub" id="label">Enfoque</div></div>
+      </div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+      <div class="sub" id="ends"></div>
+
+      <div class="ctrl">
+        <button class="pill" id="reset" type="button">Reiniciar</button>
+        <button class="play" id="go" type="button" aria-label="Iniciar"></button>
+        <button class="pill" id="skip" type="button">Saltar</button>
+      </div>
+
+      <div class="quick" aria-label="Acciones rápidas">
+        <button class="pill sm" id="q-repeat" type="button"><span data-icon="repeat" data-size="16"></span>Repetir última</button>
+        <button class="pill sm" id="q-tag" type="button"><span data-icon="swap" data-size="16"></span>Cambiar etiqueta</button>
+        <button class="pill sm" id="q-presets" type="button" aria-haspopup="menu" aria-expanded="false"><span data-icon="list" data-size="16"></span>Presets</button>
+      </div>
+
+      <details class="acc wide" id="tasks-panel">
+        <summary>Tareas<span class="sub" id="tasks-h"></span></summary>
+        <div class="accb">
+          <ul class="tasks" id="task-list"></ul>
+          <form class="addrow" id="task-form">
+            <input type="text" id="task-title" maxlength="80" placeholder="Nueva tarea" aria-label="Título de la tarea" required>
+            <input type="number" id="task-est" min="0" max="600" inputmode="numeric" placeholder="Min" aria-label="Minutos estimados">
+            <button class="b" type="submit">Añadir</button>
+          </form>
+        </div>
+      </details>
+    </section>
+
+    <!-- Panel de estadísticas y calendario -->
+    <section id="v-panel" class="pv" hidden aria-label="Estadísticas">
+      <div class="two">
+        <div class="card dk goalc">
+          <div class="gr">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="5"/><circle id="gring" cx="32" cy="32" r="28" fill="none" class="gr-arc" stroke-width="5" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="175.93"/></svg>
+            <b id="gpct">0%</b>
+          </div>
+          <div><div class="sub">Objetivo diario</div><span id="goalt">0 min</span></div>
+        </div>
+        <div class="card ac"><div class="sub">Hoy</div><b class="big" id="s-day">0 min</b><span class="sub">de enfoque</span></div>
+      </div>
+      <div class="card dk"><h2>Últimos 7 días</h2><div class="week" id="week"></div></div>
+      <div class="stats">
+        <div class="st"><b id="s-week">0 min</b><span>Esta semana</span></div>
+        <div class="st"><b id="s-month">0 min</b><span>Este mes</span></div>
+        <div class="st"><b id="s-year">0 min</b><span>Este año</span></div>
+        <div class="st"><b id="s-pomos">0</b><span>Sesiones completadas</span></div>
+        <div class="st" id="st-streak"><b id="s-streak">0 días</b><span>Racha actual</span></div>
+        <div class="st" id="st-best"><b id="s-best">0 días</b><span>Mejor racha</span></div>
+      </div>
+
+      <section class="card" aria-labelledby="h-tags">
+        <h2 id="h-tags">Por etiqueta</h2>
+        <div class="tabs scroll" id="tp" role="group" aria-label="Periodo">
+          <button type="button" data-p="day" aria-pressed="false">Hoy</button>
+          <button type="button" data-p="week" aria-pressed="true">Semana</button>
+          <button type="button" data-p="month" aria-pressed="false">Mes</button>
+          <button type="button" data-p="year" aria-pressed="false">Año</button>
+          <button type="button" data-p="all" aria-pressed="false">Todo</button>
+        </div>
+        <div class="sub" id="tagtot"></div>
+        <div id="tagstats"></div>
+      </section>
+
+      <section class="card" aria-labelledby="h-cal">
+        <div class="row">
+          <h2 id="h-cal">Calendario de actividad</h2>
+          <select id="cal-tag" class="sm" aria-label="Filtrar por etiqueta"></select>
+        </div>
+        <div class="calnav">
+          <button class="ib sm" id="cal-prev" type="button" data-icon="prev" data-size="16" aria-label="Anterior"></button>
+          <select id="cal-month" class="sm" aria-label="Mes"></select>
+          <select id="cal-year" class="sm" aria-label="Año"></select>
+          <button class="ib sm" id="cal-next" type="button" data-icon="next" data-size="16" aria-label="Siguiente"></button>
+          <div class="tabs sm" id="cal-view" role="group" aria-label="Vista">
+            <button type="button" data-v="month" aria-pressed="true">Mes</button>
+            <button type="button" data-v="year" aria-pressed="false">Año</button>
+          </div>
+        </div>
+        <div class="calwrap"><div id="cal-body" class="calbody"></div></div>
+        <p class="sub cal-sum" id="cal-sum"></p>
+        <div class="leg">Menos <i class="cd l0"></i><i class="cd l1"></i><i class="cd l2"></i><i class="cd l3"></i><i class="cd l4"></i> Más</div>
+        <p class="sub cal-hint">Pasa el cursor o mantén pulsado un día para ver su fecha y tiempo; púlsalo para abrir el resumen.</p>
+      </section>
+    </section>
+
+    <!-- Hitos y progreso visual -->
+    <section id="v-goals" class="pv" hidden aria-label="Progreso">
+      <section class="card dk sky" aria-labelledby="h-sky">
+        <h2 id="h-sky">Tu cielo</h2>
+        <svg id="sky" viewBox="0 0 420 240" role="img" aria-label="Cielo de estrellas"></svg>
+        <p id="sky-sum"></p>
+        <p class="sub" id="sky-next"></p>
+      </section>
+      <section class="card" aria-labelledby="h-badges">
+        <div class="row"><h2 id="h-badges">Hitos personales</h2><span class="sub" id="badges-sum"></span></div>
+        <ul class="badges" id="badges"></ul>
+      </section>
+    </section>
+
+    <!-- Ajustes -->
+    <section id="v-set" class="sv" hidden aria-label="Ajustes">
+      <section class="card">
+        <h2>Ajustes</h2>
+        <div class="set">
+          <label>Enfoque (min)<input type="number" inputmode="numeric" id="c-focus" min="1" max="180"></label>
+          <label>Pausa corta (min)<input type="number" inputmode="numeric" id="c-short" min="1" max="60"></label>
+          <label>Pausa larga (min)<input type="number" inputmode="numeric" id="c-long" min="1" max="120"></label>
+          <label>Sesiones hasta pausa larga<input type="number" inputmode="numeric" id="c-every" min="1" max="12"></label>
+          <label>Objetivo diario (min)<input type="number" inputmode="numeric" id="c-goal" min="1" max="1440"></label>
+        </div>
+        <label class="chk"><input type="checkbox" id="c-auto">Iniciar la siguiente fase automáticamente</label>
+        <label class="chk"><input type="checkbox" id="c-smart">Cierre inteligente de sesión (preguntas al terminar)</label>
+        <label class="chk"><input type="checkbox" id="c-wake">Mantener la pantalla encendida durante el temporizador</label>
+        <label class="chk"><input type="checkbox" id="c-notify">Avisarme al terminar (notificación y vibración)</label>
+        <div class="sub" id="nmsg"></div>
+        <label class="chk"><input type="checkbox" id="c-streaks">Mostrar contador de rachas</label>
+
+        <div class="sec">Apariencia y accesibilidad</div>
+        <div class="tabs" id="modeseg" role="group" aria-label="Modo de color">
+          <button type="button" data-v="auto" aria-pressed="false">Automático</button>
+          <button type="button" data-v="light" aria-pressed="false">Claro</button>
+          <button type="button" data-v="dark" aria-pressed="false">Oscuro</button>
+        </div>
+        <label class="chk"><input type="checkbox" id="c-motion">Reducir animaciones</label>
+        <label class="chk"><input type="checkbox" id="c-contrast">Alto contraste</label>
+
+        <details class="acc"><summary>Sonido de aviso<span class="sub" id="sndh"></span></summary><div class="accb">
+          <label class="chk"><input type="checkbox" id="c-sndon">Sonido al terminar cada bloque</label>
+          <div class="sndset" id="sndset">
+            <label>Sonido<select id="c-sound"></select></label>
+            <label>Volumen
+              <span class="volrow"><input type="range" id="c-vol" min="0" max="1" step=".05"><output id="c-vol-out" for="c-vol">40%</output></span>
+            </label>
+          </div>
+          <button class="b" id="test" type="button">Probar sonido</button>
+          <p class="sub">Los tonos se generan en el dispositivo con la Web Audio API; la aplicación no incluye archivos de audio.</p>
+        </div></details>
+
+        <details class="acc"><summary>Etiquetas<span class="sub" id="tagh"></span></summary><div class="accb">
+          <div class="chips left" id="taglist"></div>
+          <div class="addrow"><input type="text" id="newtag" maxlength="24" placeholder="Nueva etiqueta" aria-label="Nueva etiqueta"><button class="b" id="addtag" type="button">Añadir</button></div>
+        </div></details>
+
+        <details class="acc"><summary>Presets de planificación</summary><div class="accb">
+          <ul class="plist" id="preset-list"></ul>
+          <button class="b" id="pr-new" type="button">Crear plan o preset</button>
+        </div></details>
+
+        <details class="acc"><summary>Atajos de teclado</summary><div class="accb">
+          <dl class="keys">
+            <dt><kbd>Espacio</kbd></dt><dd>Iniciar o pausar</dd>
+            <dt><kbd>S</kbd></dt><dd>Saltar fase</dd>
+            <dt><kbd>R</kbd></dt><dd>Reiniciar fase</dd>
+            <dt><kbd>M</kbd></dt><dd>Modo inmersivo</dd>
+            <dt><kbd>T</kbd></dt><dd>Siguiente etiqueta</dd>
+            <dt><kbd>1</kbd>–<kbd>4</kbd></dt><dd>Cambiar de vista</dd>
+            <dt><kbd>Esc</kbd></dt><dd>Salir del modo inmersivo</dd>
+          </dl>
+        </div></details>
+      </section>
+
+      <section class="card">
+        <h2>Copia del historial</h2>
+        <div class="sub" id="sync">Los datos se guardan solo en este dispositivo.</div>
+        <p class="sub">Exporta un archivo para llevar el historial a otro dispositivo. Al importar, las sesiones se añaden sin duplicarse y el tiempo coincidente se cuenta una sola vez.</p>
+        <div class="acts">
+          <button class="b" id="exp" type="button">Exportar</button>
+          <button class="b" id="imp" type="button">Importar</button>
+          <button class="b" id="inst" type="button" hidden>Instalar aplicación</button>
+          <button class="link" id="wipe" type="button">Borrar historial</button>
+          <input type="file" id="file" accept=".json,application/json" hidden>
+        </div>
+        <div class="msg" id="msg" role="status"></div>
+      </section>
+
+      <section class="card" id="gcard">
+        <h2>Copia de seguridad en Google Drive</h2>
+        <p class="sub">Guarda y sincroniza el historial, las etiquetas, las tareas y los presets en una carpeta privada de tu Drive accesible solo para esta aplicación. Requiere un Client ID de Google (ver README).</p>
+        <label>Client ID de Google<input type="text" id="gcid" placeholder="123456789-xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false"></label>
+        <div class="acts"><button class="b main" id="gsync" type="button">Conectar y sincronizar</button><button class="link" id="gout" type="button" hidden>Desconectar</button></div>
+        <div class="msg" id="gmsg" role="status"></div>
+      </section>
+    </section>
+  </main>
+
+  <nav class="dock" id="dock" aria-label="Navegación principal">
+    <button type="button" data-v="timer" aria-current="page" aria-label="Temporizador"><span data-icon="timer" data-size="20"></span><b>Timer</b></button>
+    <button type="button" data-v="panel" aria-current="false" aria-label="Estadísticas"><span data-icon="chart" data-size="20"></span><b>Panel</b></button>
+    <button type="button" data-v="goals" aria-current="false" aria-label="Progreso"><span data-icon="trophy" data-size="20"></span><b>Logros</b></button>
+    <button type="button" data-v="set" aria-current="false" aria-label="Ajustes"><span data-icon="sliders" data-size="20"></span><b>Ajustes</b></button>
+  </nav>
+
+  <button class="pill imm-exit" id="imm-exit" type="button" hidden>Salir del modo inmersivo</button>
+
+  <!-- Reproductor de YouTube -->
+  <aside class="yt" id="yt" hidden aria-label="Reproductor de YouTube">
+    <header>
+      <b>Reproductor</b>
+      <span>
+        <button class="ib sm" id="yt-min" type="button" aria-label="Minimizar reproductor"></button>
+        <button class="ib sm" id="yt-close" type="button" aria-label="Cerrar reproductor"></button>
+      </span>
+    </header>
+    <div class="yt-body">
+      <form id="yt-form" class="addrow">
+        <input type="url" id="yt-url" placeholder="Enlace de vídeo o lista" aria-label="URL de YouTube o YouTube Music" required>
+        <button class="b" type="submit">Cargar</button>
+      </form>
+      <div class="msg" id="yt-msg" role="status"></div>
+      <div class="yt-frame" id="yt-frame"></div>
+      <p class="sub">Requiere conexión. Algunos vídeos no permiten su reproducción incrustada.</p>
+    </div>
+  </aside>
+
+  <!-- Popovers -->
+  <div class="pb" id="pop-theme" hidden><div class="pp" role="dialog" aria-label="Color del tema">
+    <h3>Color del tema</h3>
+    <div class="pal" id="pal"></div>
+    <label>Personalizado<input type="color" id="c-color" value="#f7d154"></label>
+  </div></div>
+  <div class="pb" id="pop-presets" hidden><div class="pp" role="menu" aria-label="Presets">
+    <h3>Iniciar un preset</h3>
+    <div class="pm" id="preset-menu"></div>
+  </div></div>
+
+  <!-- Diálogos -->
+  <dialog id="dlg-confirm" aria-labelledby="dc-title"><form method="dialog" class="dbox">
+    <h2 id="dc-title"></h2><p id="dc-text"></p>
+    <div class="acts end"><button class="b" value="cancel" formnovalidate>Cancelar</button><button class="b main" id="dc-ok" value="ok">Confirmar</button></div>
+  </form></dialog>
+
+  <dialog id="dlg-day" aria-labelledby="dd-title"><div class="dbox">
+    <div class="dh"><h2 id="dd-title"></h2><form method="dialog"><button class="ib sm" value="close" data-icon="x" data-size="16" aria-label="Cerrar"></button></form></div>
+    <div id="dd-sum"></div>
+    <ul class="slist" id="dd-list"></ul>
+    <div class="acts"><button class="b" id="dd-add" type="button">Añadir sesión manual</button></div>
+  </div></dialog>
+
+  <dialog id="dlg-edit" aria-labelledby="ed-title"><form method="dialog" class="dbox" id="ed-form">
+    <h2 id="ed-title">Editar sesión</h2>
+    <div class="set">
+      <label>Fecha<input type="date" id="ed-date" required></label>
+      <label>Hora de inicio<input type="time" id="ed-time" required></label>
+      <label>Duración (min)<input type="number" id="ed-min" min="1" max="1440" inputmode="numeric" required></label>
+      <label>Etiqueta<select id="ed-tag"></select></label>
+    </div>
+    <label class="chk"><input type="checkbox" id="ed-done">Contar como sesión completada</label>
+    <div class="msg err" id="ed-error" role="alert"></div>
+    <div class="acts end"><button class="b" value="cancel" formnovalidate>Cancelar</button><button class="b main" value="save">Guardar</button></div>
+  </form></dialog>
+
+  <dialog id="dlg-plan" aria-labelledby="pl-title"><form method="dialog" class="dbox" id="pl-form">
+    <h2 id="pl-title">Plan por bloques</h2>
+    <label>Nombre (opcional)<input type="text" id="pl-name" maxlength="40" placeholder="Por ejemplo, Mañana de estudio"></label>
+    <ol class="plrows" id="pl-rows"></ol>
+    <button class="b" id="pl-add" type="button">Añadir bloque</button>
+    <div class="sub" id="pl-total"></div>
+    <div class="msg err" id="pl-error" role="alert"></div>
+    <div class="acts end"><button class="b" value="cancel" formnovalidate>Cancelar</button><button class="b" value="save">Guardar preset</button><button class="b main" value="start">Iniciar plan</button></div>
+  </form></dialog>
+
+  <dialog id="dlg-close" aria-labelledby="cl-title"><form method="dialog" class="dbox">
+    <h2 id="cl-title">Sesión completada</h2>
+    <p id="cl-sum" class="sub"></p>
+    <fieldset id="cl-task" hidden>
+      <legend>¿Has completado la tarea «<span id="cl-task-name"></span>»?</legend>
+      <label class="chk"><input type="radio" name="taskdone" id="cl-task-yes">Sí, marcarla como completada</label>
+      <label class="chk"><input type="radio" name="taskdone" id="cl-task-no" checked>Todavía no, mantenerla pendiente</label>
+    </fieldset>
+    <p id="cl-block" hidden></p>
+    <div class="acts end">
+      <button class="b" value="stop">Detenerme</button>
+      <button class="b" value="break">Descansar</button>
+      <button class="b main" id="cl-again" value="again">Otra sesión de enfoque</button>
+    </div>
+  </form></dialog>
+
+  <div class="shoot" id="shoot" aria-hidden="true"></div>
+  <div class="tip" id="tip" role="tooltip"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="live" class="sr" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
