@@ -26,24 +26,6 @@ function buildStars() {
   }
 }
 
-/** Resplandor suave del color del tema que sigue al puntero (solo ratón). */
-function initGlow() {
-  const glow = $('#glow');
-  let x = 0;
-  let y = 0;
-  let queued = false;
-  addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    x = e.clientX;
-    y = e.clientY;
-    glow.classList.add('on');
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => { queued = false; glow.style.transform = `translate(${x}px, ${y}px)`; });
-  });
-  document.documentElement.addEventListener('mouseleave', () => glow.classList.remove('on'));
-}
-
 /** Añade `total` partículas que se dispersan radialmente desde el centro del contenedor. */
 function scatter(box, total, minReach, maxReach) {
   for (let i = 0; i < total; i++) {
@@ -99,7 +81,6 @@ function scheduleShootingStar() {
 
 export function initFx() {
   buildStars();
-  initGlow();
   addEventListener('resize', debounce(buildStars, 250));
   on('phase:end', ({ ended }) => { if (ended === 'focus') burst(); });
   scheduleShootingStar();

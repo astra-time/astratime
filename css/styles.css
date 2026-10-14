@@ -352,11 +352,6 @@ body.immersive .time { font-size: clamp(3.4rem, 20vw, 7.5rem); }
 .chip:hover, .task:hover, .st:hover, .badge.on:hover { transform: translateY(-2px); }
 .card:hover { border-color: color-mix(in srgb, var(--acc-ui) 50%, var(--line)); box-shadow: 0 10px 30px color-mix(in srgb, var(--acc-ui) 14%, transparent); }
 button.cd:hover { transform: scale(1.14); }
-.glow { position: fixed; left: 0; top: 0; width: 480px; height: 480px; margin: -240px 0 0 -240px; border-radius: 50%; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .5s; will-change: transform;
-  background: radial-gradient(circle, color-mix(in srgb, var(--acc-ui) 22%, transparent), transparent 66%); mix-blend-mode: screen; }
-.glow.on { opacity: 1; }
-:root[data-theme="light"] .glow { mix-blend-mode: normal; }
-:root[data-theme="light"] .glow.on { opacity: .5; }
 .stars i.g { background: linear-gradient(to top, var(--acc-ui), transparent); box-shadow: 0 0 7px var(--acc-ui); }
 
 /* Efectos ambientales (se desactivan con «Reducir animaciones») */
@@ -400,13 +395,11 @@ button.cd:hover, .chip:hover { transform: translateY(-1px); }
 :root[data-motion="reduced"] .ring-arc { filter: none; animation: none !important; }
 :root[data-motion="reduced"] .orbit, :root[data-motion="reduced"] .orb-halo { display: none; }
 :root[data-motion="reduced"] .play::before, :root[data-motion="reduced"] .play::after { display: none; }
-:root[data-motion="reduced"] .glow { display: none; }
 :root[data-motion="reduced"] :is(.ib, .pill, button.b, .dock button, .play, .chip, .task, .st, .badge, button.cd, .card):hover { transform: none !important; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) {
   .stars i { animation: none !important; top: var(--y); height: var(--w); }
   .ring-arc { filter: none; animation: none !important; }
   .orbit, .orb-halo { display: none; }
   .play::before, .play::after { display: none; }
-  .glow { display: none; }
   :is(.ib, .pill, button.b, .dock button, .play, .chip, .task, .st, .badge, button.cd, .card):hover { transform: none !important; box-shadow: none; }
 }
