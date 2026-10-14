@@ -1,5 +1,5 @@
 /* Service worker: precarga los recursos de la aplicación para su uso sin conexión. */
-const CACHE = 'astratime-v3';
+const CACHE = 'astratime-v4';
 const ASSETS = [
   './', 'index.html', 'manifest.json', 'css/styles.css',
   'fonts/space-grotesk-latin-wght-normal.woff2',

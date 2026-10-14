@@ -153,16 +153,17 @@ input[type="color"] { width: 56px; height: 44px; padding: 2px; background: var(-
 .ps-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .85rem; color: var(--mute); }
 .ps-top .link { min-height: 32px; padding: 0; }
 .ps-line { font-weight: 600; }
-.ring { position: relative; width: min(80vw, 320px); width: min(80vw, clamp(200px, calc(100dvh - 540px), 320px)); aspect-ratio: 1; cursor: default; }
+.ring { position: relative; width: min(80vw, 320px); width: min(80vw, clamp(240px, calc(100dvh - 540px), 320px)); aspect-ratio: 1; cursor: default; container-type: inline-size; }
 .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
 .ring-track { stroke: var(--track); }
 .ring-arc { stroke: var(--acc-ui); transition: stroke-dashoffset .3s linear; filter: drop-shadow(0 0 7px color-mix(in srgb, var(--acc-ui) 70%, transparent)); }
-.orbit { stroke: var(--acc-ui); opacity: .55; transform-origin: 110px 110px; }
+.orbit { stroke: var(--acc-ui); opacity: .6; transform-origin: 110px 110px; animation: spin 70s linear infinite; }
 .orb { transform-origin: 110px 110px; transition: transform .3s linear; }
 .orb-dot { fill: var(--acc-ui); }
-.orb-halo { fill: var(--acc-ui); opacity: .28; transform-box: fill-box; transform-origin: center; }
+.orb-halo { fill: var(--acc-ui); opacity: .28; transform-box: fill-box; transform-origin: center; animation: halo 3s ease-in-out infinite; }
 .ring .t { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
-.time { font-size: clamp(3rem, 17vw, 4.6rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+/* El tamaño de la hora se define respecto al círculo (cqw = 1 % de su anchura), de modo que nunca lo desborde. */
+.time { font-size: clamp(2.2rem, 17vw, 4.6rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
 .dots { display: flex; gap: 10px; min-height: 10px; }
 .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--track); transition: background .3s; }
 .dots i.f { background: var(--acc); }
@@ -218,6 +219,7 @@ select.sm { min-height: 34px; padding: 4px 28px 4px 10px; font-size: .8rem; bord
 .cd.future { background: none; color: var(--mute); opacity: .45; cursor: default; border: 1px dashed var(--line); }
 button.cd:hover { outline: 2px solid var(--mute); outline-offset: 1px; }
 .cal-sum { margin: 8px 0 0; }
+.note { margin: 2px 0 6px; padding: 10px 14px; border-radius: 14px; background: var(--surface2); font-size: .82rem; line-height: 1.4; }
 .cal-hint { margin: 6px 0 0; font-size: .76rem; }
 .leg { display: flex; gap: 4px; align-items: center; justify-content: flex-end; color: var(--mute); font-size: .78rem; margin-top: 6px; }
 .leg .cd { display: inline-block; width: 12px; height: 12px; border-radius: 4px; cursor: default; }
@@ -304,6 +306,10 @@ body.immersive .task { pointer-events: none; }
 body.immersive .task::after { display: none; }
 body.immersive .ring { width: min(78vw, 62vh, 480px); cursor: pointer; }
 body.immersive .time { font-size: clamp(3.4rem, 20vw, 7.5rem); }
+@supports (font-size: 1cqw) {
+  .time, body.immersive .time { font-size: 20.5cqw; }
+  .ring .sub { font-size: clamp(.72rem, 4.6cqw, 1rem); }
+}
 
 /* 7. Modos y accesibilidad */
 @media (max-width: 520px) {
@@ -335,6 +341,24 @@ body.immersive .time { font-size: clamp(3.4rem, 20vw, 7.5rem); }
 :root[data-contrast="high"] .cd.l1, :root[data-contrast="high"] .cd.l2 { outline: 1px solid var(--ink); }
 :root[data-contrast="high"] .sky .part { stroke-opacity: .6; }
 
+/* Interacciones al pasar el cursor: elevación y resplandor del color del tema */
+.ib, .pill, button.b, .dock button, .play, .chip, .task, .st, .badge, .card, button.cd {
+  transition: transform .22s cubic-bezier(.2, .7, .2, 1), box-shadow .25s, background .2s, color .2s, border-color .25s;
+}
+.ib:hover:not(:disabled) { transform: scale(1.1); box-shadow: 0 0 14px color-mix(in srgb, var(--acc-ui) 45%, transparent); }
+.pill:hover, button.b:hover { transform: translateY(-2px); box-shadow: 0 8px 20px color-mix(in srgb, var(--acc-ui) 28%, transparent); }
+.dock button:hover { transform: translateY(-3px); }
+.play:hover { transform: scale(1.07); box-shadow: 0 0 26px color-mix(in srgb, var(--acc-ui) 55%, transparent); }
+.chip:hover, .task:hover, .st:hover, .badge.on:hover { transform: translateY(-2px); }
+.card:hover { border-color: color-mix(in srgb, var(--acc-ui) 50%, var(--line)); box-shadow: 0 10px 30px color-mix(in srgb, var(--acc-ui) 14%, transparent); }
+button.cd:hover { transform: scale(1.14); }
+.glow { position: fixed; left: 0; top: 0; width: 480px; height: 480px; margin: -240px 0 0 -240px; border-radius: 50%; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .5s; will-change: transform;
+  background: radial-gradient(circle, color-mix(in srgb, var(--acc-ui) 22%, transparent), transparent 66%); mix-blend-mode: screen; }
+.glow.on { opacity: 1; }
+:root[data-theme="light"] .glow { mix-blend-mode: normal; }
+:root[data-theme="light"] .glow.on { opacity: .5; }
+.stars i.g { background: linear-gradient(to top, var(--acc-ui), transparent); box-shadow: 0 0 7px var(--acc-ui); }
+
 /* Efectos ambientales (se desactivan con «Reducir animaciones») */
 .stars { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .stars i { position: absolute; top: -10vh; left: var(--x); width: var(--w); height: var(--len); border-radius: 2px; background: linear-gradient(to top, var(--ink), transparent); opacity: var(--o); rotate: 12deg; animation: drift var(--d) linear infinite; animation-delay: var(--delay); will-change: translate; }
@@ -349,7 +373,7 @@ body.immersive .time { font-size: clamp(3.4rem, 20vw, 7.5rem); }
 .burst .shock { position: absolute; inset: 4%; border-radius: 50%; border: 3px solid var(--acc-ui); animation: shock 1.1s ease-out forwards; }
 .ring.flash { animation: flash .9s ease-out; }
 body.running .ring-arc { animation: breathe 2.6s ease-in-out infinite; }
-body.running .orbit { animation: spin 38s linear infinite; }
+body.running .orbit { animation: spin 26s linear infinite; }
 body.running .orb-halo { animation: halo 1.8s ease-in-out infinite; }
 body.running .play { position: relative; }
 body.running .play::before, body.running .play::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2.5px solid var(--acc-ui); animation: ripple 2.4s ease-out infinite; pointer-events: none; }
@@ -376,9 +400,13 @@ button.cd:hover, .chip:hover { transform: translateY(-1px); }
 :root[data-motion="reduced"] .ring-arc { filter: none; animation: none !important; }
 :root[data-motion="reduced"] .orbit, :root[data-motion="reduced"] .orb-halo { display: none; }
 :root[data-motion="reduced"] .play::before, :root[data-motion="reduced"] .play::after { display: none; }
+:root[data-motion="reduced"] .glow { display: none; }
+:root[data-motion="reduced"] :is(.ib, .pill, button.b, .dock button, .play, .chip, .task, .st, .badge, button.cd, .card):hover { transform: none !important; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) {
   .stars i { animation: none !important; top: var(--y); height: var(--w); }
   .ring-arc { filter: none; animation: none !important; }
   .orbit, .orb-halo { display: none; }
   .play::before, .play::after { display: none; }
+  .glow { display: none; }
+  :is(.ib, .pill, button.b, .dock button, .play, .chip, .task, .st, .badge, button.cd, .card):hover { transform: none !important; box-shadow: none; }
 }

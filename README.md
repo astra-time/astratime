@@ -34,9 +34,9 @@ No hay cuentas de usuario, servidor ni telemetría. Los datos permanecen en el n
 
 **Interfaz y accesibilidad**
 - Círculo de progreso con el color del tema: el arco se llena con el acento elegido y un nodo orbital (el mismo motivo que el logotipo) marca el avance.
-- Animaciones ambientales: lluvia de estrellas lenta de fondo, resplandor y órbita giratoria alrededor del círculo durante el enfoque, ondas en el botón de pausa, destello con partículas y onda expansiva al completar una sesión, y estrella fugaz ocasional. Se desactivan con *Reducir animaciones*.
+- Animaciones ambientales, activas por defecto también en reposo: lluvia de estrellas diagonal cuyo tamaño y densidad se escalan con la pantalla, órbita punteada y halo del nodo en el círculo, resplandor y ondas durante el enfoque, resplandor del color del tema que sigue al ratón, elevación de botones y tarjetas al pasar el cursor, destello con partículas y onda expansiva al completar una sesión, destello al desbloquear un hito y estrella fugaz ocasional.
 - Modo claro, oscuro o automático; color de acento seleccionable o personalizado, persistente en `localStorage`.
-- Las animaciones están activas por defecto en escritorio y móvil, sin restricciones por tamaño de pantalla. Solo dos cosas las desactivan: el conmutador *Reducir animaciones* de Ajustes y la preferencia `prefers-reduced-motion` del sistema. En ese modo, el arco, el nodo del círculo y el resto de estados visuales se mantienen fijos, sin brillos ni ondas ni destellos. El alto contraste no modifica las animaciones.
+- Las animaciones están activas por defecto en escritorio y móvil, sin restricciones por tamaño de pantalla. Solo dos cosas las desactivan: el conmutador *Reducir animaciones* de Ajustes y la preferencia `prefers-reduced-motion` del sistema. Cuando es el sistema quien la impone, Ajustes lo indica con un aviso y explica cómo cambiarlo. En ese modo, el arco, el nodo del círculo y el resto de estados visuales se mantienen fijos, sin brillos ni ondas ni destellos. El alto contraste no modifica las animaciones.
 - Navegación por teclado, etiquetas ARIA, diálogos nativos `<dialog>`, regiones `aria-live` y enlace de salto al contenido.
 
 **Otros**

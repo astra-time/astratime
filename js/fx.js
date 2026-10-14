@@ -1,23 +1,47 @@
 /** Efectos visuales ambientales: lluvia de estrellas lenta, destello al completar y estrellas fugaces. */
 import { on } from './bus.js';
-import { $ } from './util.js';
+import { $, clamp, debounce } from './util.js';
 
 const reduced = () => document.documentElement.dataset.motion === 'reduced';
 const rand = (min, max) => min + Math.random() * (max - min);
 
-/** Estrellas que descienden en diagonal con duraciones largas; unas son puntos y otras estelas cortas. */
+/**
+ * Estrellas que descienden en diagonal. Tamaño, longitud de la estela y cantidad se escalan con la
+ * anchura de la ventana para que también se aprecien en pantallas grandes.
+ */
 function buildStars() {
   const layer = $('#stars');
-  const count = Math.min(40, Math.round(innerWidth / 11));
+  layer.replaceChildren();
+  const scale = clamp(innerWidth / 800, 1, 1.9);
+  const count = Math.min(90, Math.round(innerWidth / 12));
   for (let i = 0; i < count; i++) {
-    const trail = Math.random() < 0.5;
-    const width = rand(1, 2.2);
+    const trail = Math.random() < 0.55;
+    const width = rand(1.3, 2.4) * scale;
     const star = document.createElement('i');
+    if (Math.random() < 0.18) star.className = 'g';
     star.style.cssText = `--x:${rand(-5, 105).toFixed(1)}%;--y:${rand(0, 100).toFixed(0)}vh;--w:${width.toFixed(1)}px;`
-      + `--len:${trail ? rand(10, 26).toFixed(0) : width.toFixed(1)}px;--o:${rand(0.3, 0.85).toFixed(2)};`
-      + `--d:${rand(26, 70).toFixed(0)}s;--delay:-${rand(0, 70).toFixed(0)}s`;
+      + `--len:${(trail ? rand(16, 36) * scale : width).toFixed(0)}px;--o:${rand(0.4, 1).toFixed(2)};`
+      + `--d:${rand(16, 42).toFixed(0)}s;--delay:-${rand(0, 42).toFixed(0)}s`;
     layer.append(star);
   }
+}
+
+/** Resplandor suave del color del tema que sigue al puntero (solo ratón). */
+function initGlow() {
+  const glow = $('#glow');
+  let x = 0;
+  let y = 0;
+  let queued = false;
+  addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    x = e.clientX;
+    y = e.clientY;
+    glow.classList.add('on');
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; glow.style.transform = `translate(${x}px, ${y}px)`; });
+  });
+  document.documentElement.addEventListener('mouseleave', () => glow.classList.remove('on'));
 }
 
 /** Añade `total` partículas que se dispersan radialmente desde el centro del contenedor. */
@@ -75,6 +99,8 @@ function scheduleShootingStar() {
 
 export function initFx() {
   buildStars();
+  initGlow();
+  addEventListener('resize', debounce(buildStars, 250));
   on('phase:end', ({ ended }) => { if (ended === 'focus') burst(); });
   scheduleShootingStar();
 }

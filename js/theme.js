@@ -48,7 +48,15 @@ export function applyTheme() {
   const highContrast = cfg.highContrast || matchMedia('(prefers-contrast: more)').matches;
   root.dataset.theme = light ? 'light' : 'dark';
   root.dataset.contrast = highContrast ? 'high' : 'normal';
-  root.dataset.motion = cfg.reduceMotion || matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced' : 'full';
+  const systemReduces = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  root.dataset.motion = cfg.reduceMotion || systemReduces ? 'reduced' : 'full';
+  const note = $('#motion-note');
+  if (note) {
+    note.hidden = !systemReduces;
+    note.textContent = systemReduces
+      ? 'Tu sistema tiene activada la reducción de movimiento, por eso las animaciones están desactivadas. Para verlas, desactiva esa opción: en Windows, Configuración > Accesibilidad > Efectos visuales > Efectos de animación; en macOS, Ajustes del Sistema > Accesibilidad > Pantalla > Reducir movimiento.'
+      : '';
+  }
 
   const bg = light ? BG.light : BG.dark;
   let accent = validColor(cfg.accent) ? cfg.accent.toLowerCase() : '#f7d154';
