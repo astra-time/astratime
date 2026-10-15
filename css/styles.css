@@ -155,6 +155,7 @@ input[type="color"] { width: 56px; height: 44px; padding: 2px; background: var(-
 .ps-line { font-weight: 600; }
 .ring { position: relative; width: min(80vw, 320px); width: min(80vw, clamp(240px, calc(100dvh - 540px), 320px)); aspect-ratio: 1; cursor: default; container-type: inline-size; }
 .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.ring-fill { fill: var(--bg); } /* disco opaco: la lluvia de estrellas no atraviesa el texto */
 .ring-track { stroke: var(--track); }
 .ring-arc { stroke: var(--acc-ui); transition: stroke-dashoffset .3s linear; filter: drop-shadow(0 0 7px color-mix(in srgb, var(--acc-ui) 70%, transparent)); }
 .orbit { stroke: var(--acc-ui); opacity: .6; transform-origin: 110px 110px; animation: spin 70s linear infinite; }
@@ -163,7 +164,7 @@ input[type="color"] { width: 56px; height: 44px; padding: 2px; background: var(-
 .orb-halo { fill: var(--acc-ui); opacity: .28; transform-box: fill-box; transform-origin: center; animation: halo 3s ease-in-out infinite; }
 .ring .t { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
 /* El tamaño de la hora se define respecto al círculo (cqw = 1 % de su anchura), de modo que nunca lo desborde. */
-.time { font-size: clamp(2.2rem, 17vw, 4.6rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.time { font-family: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif; font-size: clamp(2.2rem, 17vw, 4.6rem); font-weight: 700; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums lining-nums; font-synthesis: none; white-space: nowrap; }
 .dots { display: flex; gap: 10px; min-height: 10px; }
 .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--track); transition: background .3s; }
 .dots i.f { background: var(--acc); }
@@ -172,7 +173,18 @@ input[type="color"] { width: 56px; height: 44px; padding: 2px; background: var(-
 .quick { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .task-item { display: flex; align-items: center; gap: 6px; background: var(--surface2); border-radius: 18px; padding: 4px 6px 4px 4px; }
-.task-item.sel { outline: 2px solid var(--acc-ui); }
+.task-item { transition: background .2s, box-shadow .2s; }
+.task-item.sel { background: color-mix(in srgb, var(--acc) 20%, var(--surface2)); box-shadow: inset 0 0 0 2px var(--acc-ui); }
+.ti-badge { flex: none; font-size: .68rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; background: var(--acc); color: var(--onacc); border-radius: 999px; padding: 2px 9px; }
+.taskform { display: grid; gap: 8px; margin-top: 12px; }
+.taskrow { display: grid; grid-template-columns: minmax(0, 1fr) 84px auto; gap: 8px; }
+.taskrow select { min-width: 0; }
+.ytrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* Espacio inferior: la barra de navegación flotante no debe tapar la lista ni el formulario de tareas. */
+.tv { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0)); }
+.tv #tasks-panel[open] { margin-bottom: 120px; }
+#task-form :is(input, select, button) { scroll-margin-bottom: 150px; }
+body.has-player main { padding-bottom: 260px; }
 .task-item.done .ti-title { text-decoration: line-through; color: var(--mute); }
 .ti-main { flex: 1; min-width: 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; padding: 8px 12px; cursor: pointer; display: grid; }
 .ti-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -285,6 +297,15 @@ legend { padding: 0 6px; font-size: .9rem; }
 .yt-info small { color: var(--mute); font-size: .76rem; min-height: 1.2em; }
 .yt-ctl { display: flex; gap: 6px; }
 .yt-body { padding: 0 14px 14px; }
+.yt { max-height: calc(100dvh - 130px); overflow: auto; transition: opacity .2s, transform .2s, visibility .2s; }
+.yt.is-hidden { visibility: hidden; opacity: 0; transform: translateY(12px); pointer-events: none; }
+.yt-qhead { display: flex; justify-content: space-between; align-items: baseline; margin: 10px 0 6px; font-size: .9rem; }
+.yt-queue { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+.yt-queue li { display: flex; align-items: center; gap: 6px; background: var(--surface2); border-radius: 14px; padding: 4px 4px 4px 12px; font-size: .84rem; }
+.yt-queue .q-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.yt-queue .empty { background: none; color: var(--mute); padding-left: 0; }
+.ib.playing { position: relative; }
+.ib.playing::after { content: ""; position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 2px var(--surface); animation: halo 1.6s ease-in-out infinite; }
 /* Minimizado: el reproductor sigue visible en miniatura (y por tanto activo) junto a sus controles. */
 .yt.min .yt-main { grid-template-columns: 112px 1fr; align-items: center; padding-bottom: 12px; }
 .yt.min .yt-body { display: none; }

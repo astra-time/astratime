@@ -123,6 +123,7 @@ function finishPhase() {
   st.running = false;
   setWake(false);
   if (ended === 'focus') {
+    st.override = null; // el tiempo asignado por una tarea vale solo para la sesión que se inicia con él
     const before = plans.current();
     const session = closeSegment(true);
     st.done++;
@@ -191,6 +192,27 @@ export function repeatLast() {
   st.override = null;
   start();
   return true;
+}
+
+/**
+ * Carga en el temporizador el tiempo asignado a una tarea para poder iniciar la sesión de inmediato.
+ * No actúa si hay una fase en marcha o un plan activo (el plan fija la duración de cada bloque).
+ * @returns {number} minutos cargados, o 0 si no se modificó el temporizador
+ */
+export function loadTaskTime(task) {
+  const minutes = clamp(Math.round(Number(task?.est) || 0), 0, 180);
+  if (st.running || plans.current() || !minutes) return 0;
+  st.override = minutes;
+  st.mode = 'focus';
+  reset();
+  return minutes;
+}
+
+/** Restablece la duración de enfoque habitual al desactivar la tarea. */
+export function clearTaskTime() {
+  if (st.running || st.override === null) return;
+  st.override = null;
+  if (st.mode === 'focus') reset();
 }
 
 /** Inicia el plan activo desde su primer bloque pendiente. */

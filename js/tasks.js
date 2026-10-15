@@ -1,4 +1,4 @@
-/** Tareas vinculadas a las sesiones, con tiempo estimado frente al real. */
+/** Tareas vinculadas a las sesiones, con tiempo asignado frente al real. */
 import { db, F, persist, saveCfg, liveSessions } from './data.js';
 import { emit } from './bus.js';
 import { $, h, uid } from './util.js';
@@ -40,11 +40,17 @@ export function remove(id) {
   if (db.cfg.task === id) { db.cfg.task = null; saveCfg(); }
 }
 
+/**
+ * Alterna la tarea activa. Al activarla se emite `task:select` (el temporizador carga su tiempo
+ * asignado); al desactivarla, `task:deselect`.
+ */
 export function select(id) {
-  const t = byId(id);
-  db.cfg.task = db.cfg.task === id ? null : id;
+  const task = byId(id);
+  if (!task || task.done) return;
+  const deselect = db.cfg.task === id;
+  db.cfg.task = deselect ? null : id;
   saveCfg();
-  if (t && db.cfg.task) emit('task:select', t);
+  emit(deselect ? 'task:deselect' : 'task:select', task);
 }
 
 /** Recupera la primera tarea pendiente de la etiqueta activa cuando no hay una seleccionada. */
@@ -54,6 +60,18 @@ export function recover() {
   db.cfg.task = pending ? pending.id : null;
 }
 
+/* ---------- Interfaz ---------- */
+
+let tagTouched = false;
+
+/** Rellena el selector de etiqueta del formulario; por defecto, la etiqueta activa. */
+export function renderTagOptions() {
+  const select = $('#task-tag');
+  const previous = select.value;
+  select.replaceChildren(...db.cfg.tags.map((t) => h('option', { value: t, text: t })));
+  select.value = tagTouched && db.cfg.tags.includes(previous) ? previous : db.cfg.tag;
+}
+
 export function render() {
   const items = [...list()].sort((a, b) => a.done - b.done || a.created - b.created);
   const pending = items.filter((t) => !t.done).length;
@@ -61,34 +79,36 @@ export function render() {
   $('#task-list').replaceChildren(...items.map((t) => {
     const real = Math.round(realSec(t.id) / 60);
     const over = t.est && real > t.est;
-    return h('li', { class: `task-item${t.done ? ' done' : ''}${t.id === db.cfg.task ? ' sel' : ''}` },
+    const selected = t.id === db.cfg.task && !t.done;
+    const doneBtn = h('button', {
+      class: 'ib sm', type: 'button', 'aria-label': t.done ? `Reabrir ${t.title}` : `Completar ${t.title}`, onclick: () => setDone(t.id, !t.done),
+    });
+    const delBtn = h('button', { class: 'ib sm', type: 'button', 'aria-label': `Eliminar ${t.title}`, onclick: () => remove(t.id) });
+    doneBtn.innerHTML = icon(t.done ? 'repeat' : 'check', 16);
+    delBtn.innerHTML = icon('trash', 16);
+    return h('li', { class: `task-item${t.done ? ' done' : ''}${selected ? ' sel' : ''}` },
       h('button', {
-        class: 'ti-main', type: 'button', 'aria-pressed': String(t.id === db.cfg.task), disabled: !!t.done,
-        onclick: () => select(t.id),
+        class: 'ti-main', type: 'button', 'aria-pressed': String(selected), disabled: !!t.done, onclick: () => select(t.id),
       }, h('span', { class: 'ti-title', text: t.title }),
       h('span', { class: `ti-meta${over ? ' over' : ''}`, text: `${t.tag} · ${real}${t.est ? ` / ${t.est}` : ''} min` })),
-      h('button', {
-        class: 'ib sm', type: 'button', 'aria-label': t.done ? `Reabrir ${t.title}` : `Completar ${t.title}`,
-        onclick: () => setDone(t.id, !t.done),
-      }),
-      h('button', { class: 'ib sm', type: 'button', 'aria-label': `Eliminar ${t.title}`, onclick: () => remove(t.id) }));
+      selected ? h('span', { class: 'ti-badge', text: 'Activa' }) : null,
+      doneBtn, delBtn);
   }));
-  // Los iconos se inyectan después de crear los botones para mantener `h` libre de HTML.
-  [...$('#task-list').children].forEach((li, i) => {
-    const [, doneBtn, delBtn] = li.children;
-    doneBtn.innerHTML = icon(items[i].done ? 'repeat' : 'check', 16);
-    delBtn.innerHTML = icon('trash', 16);
-  });
 }
 
 export function initTasks() {
+  renderTagOptions();
+  $('#task-tag').addEventListener('change', () => { tagTouched = true; });
   $('#task-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const title = $('#task-title');
-    const task = add({ title: title.value, est: Number($('#task-est').value), tag: db.cfg.tag });
+    const tag = $('#task-tag').value || db.cfg.tag;
+    const task = add({ title: title.value, est: Number($('#task-est').value), tag });
     if (!task) return;
     title.value = '';
     $('#task-est').value = '';
+    tagTouched = false;
+    renderTagOptions();
     title.focus();
   });
 }

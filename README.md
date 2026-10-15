@@ -1,19 +1,20 @@
 # AstraTime
 
-**Temporizador Pomodoro con registro de horas de estudio.** Funciona en el navegador, se instala como una aplicación en el móvil y en el ordenador, no necesita cuenta y guarda tus datos en tu propio dispositivo.
+**Temporizador de enfoque con registro de horas de estudio.** Funciona en el navegador, se instala como una aplicación en el móvil y en el ordenador, no necesita cuenta y guarda tus datos en tu propio dispositivo.
 
 <p align="center">
-  <img src="docs/temporizador.png" alt="Temporizador con el círculo de progreso en el color del tema" width="190">
-  <img src="docs/panel.png" alt="Panel de estadísticas con el objetivo diario y los últimos siete días" width="190">
-  <img src="docs/calendario.png" alt="Calendario de actividad por mes" width="190">
-  <img src="docs/logros.png" alt="Cielo de estrellas e hitos personales" width="190">
+  <img src="docs/temporizador.png" alt="Temporizador con el círculo de progreso en el color del tema" width="150">
+  <img src="docs/tareas.png" alt="Lista de tareas con la tarea activa y el formulario para crear otra" width="150">
+  <img src="docs/panel.png" alt="Panel de estadísticas con el objetivo diario y los últimos siete días" width="150">
+  <img src="docs/calendario.png" alt="Calendario de actividad por mes" width="150">
+  <img src="docs/logros.png" alt="Cielo de estrellas e hitos personales" width="150">
 </p>
 
 ## Qué es y para qué sirve
 
-La técnica Pomodoro consiste en trabajar en bloques de tiempo concentrado (por defecto, 25 minutos) separados por descansos cortos (5 minutos). Tras varios bloques (por defecto, 4) se hace un descanso largo (15 minutos).
+Es una herramienta para trabajar por bloques de tiempo concentrado (por defecto, 25 minutos) separados por descansos cortos (5 minutos); tras varios bloques (por defecto, 4) se hace un descanso largo (15 minutos). Es un método de gestión del tiempo muy extendido, conocido como la técnica Pomodoro® (ver [Aviso sobre marcas](#aviso-sobre-marcas)).
 
-AstraTime aplica esa técnica y, además, **registra cuánto tiempo estudias y en qué**. Cada sesión de enfoque se guarda con su hora de inicio, su duración y una etiqueta (por ejemplo, el nombre de una asignatura). Con ese registro la aplicación calcula tus totales por día, semana, mes y año, te muestra un calendario de actividad y te ayuda a planificar tus bloques de estudio.
+AstraTime aplica esa idea y, además, **registra cuánto tiempo estudias y en qué**. Cada sesión de enfoque se guarda con su hora de inicio, su duración y una etiqueta (por ejemplo, el nombre de una asignatura). Con ese registro la aplicación calcula tus totales por día, semana, mes y año, te muestra un calendario de actividad y te ayuda a planificar tus bloques de estudio.
 
 Nació como herramienta personal para llevar un control transparente de las horas de estudio y organizarse mejor. El código es abierto, por si resulta útil a más gente.
 
@@ -33,11 +34,11 @@ La barra inferior tiene cuatro vistas: **Timer**, **Panel**, **Logros** y **Ajus
 ### Timer
 
 - **Fases:** *Enfoque*, *Pausa corta* y *Pausa larga*. Los puntos bajo el círculo marcan cuántos bloques llevas en el ciclo. Con *Saltar* pasas a la siguiente fase y con *Reiniciar* vuelves a empezar la actual.
-- **Etiqueta:** la que elijas queda asociada a cada sesión de enfoque. Puedes cambiarla en cualquier momento; si el temporizador está en marcha, la sesión se divide en dos.
-- **Tareas:** en el apartado *Tareas* anotas lo que quieres hacer, con un tiempo estimado. Al seleccionar una tarea, las sesiones se vinculan a ella y verás el tiempo real frente al estimado.
+- **Etiqueta:** la que elijas queda asociada a cada sesión de enfoque. Se cambia desde la pastilla de arriba o activando una tarea; si el temporizador está en marcha, la sesión se divide en dos.
+- **Tareas:** en el apartado *Tareas* anotas lo que quieres hacer. Al crearla eliges **a qué etiqueta pertenece** (por defecto, la activa) y los minutos que le asignas. Al pulsar una tarea queda **activa** (aparece marcada) y se carga su tiempo en el temporizador, listo para iniciar; la etiqueta cambia a la suya y las sesiones se vinculan a ella, con el tiempo real frente al asignado. Si hay una fase en marcha o un plan activo, el tiempo no se modifica.
 - **Planes por bloques:** con *Presets > Nuevo plan* defines una secuencia como "60 min de Matemáticas, luego 30 min de Inglés". La aplicación va cambiando de etiqueta sola y te avisa del avance. Si un bloque se queda corto, te ofrece una **sesión extra** con la misma etiqueta. Los planes se pueden guardar como *presets* y arrancar con un solo toque.
 - **Cierre de sesión:** al terminar un bloque aparece una pregunta breve: si completaste la tarea y si quieres descansar, continuar o detenerte. Se puede desactivar en Ajustes.
-- **Acciones rápidas:** *Repetir última* (mismo tiempo y etiqueta que la última sesión), *Cambiar etiqueta* y *Presets*.
+- **Acciones rápidas:** *Repetir última* (mismo tiempo y etiqueta que la última sesión) y *Presets*.
 - **Modo inmersivo:** oculta todo salvo el temporizador y la etiqueta (botón de pantalla completa de la cabecera o tecla `M`).
 - **Pantalla encendida:** mientras corre el temporizador, la pantalla no se apaga (se puede desactivar).
 
@@ -61,7 +62,7 @@ El color del tema se elige con el icono de paleta de la cabecera y se recuerda a
 
 ### Música
 
-El icono de nota musical abre un reproductor flotante: pega el enlace de un vídeo o una lista de YouTube o YouTube Music. **Minimizarlo** mantiene la música sonando; **cerrarlo o pausarlo** la detiene. YouTube puede mostrar anuncios dentro del reproductor, y la aplicación no puede eliminarlos.
+El icono de nota musical abre un reproductor flotante: pega el enlace de un vídeo o una lista de YouTube o YouTube Music. El reproductor **sigue activo en segundo plano**: ocultar la ventana (X) o minimizarla no detiene la música; solo se detiene con los botones de **pausa** o de **detener**. Un punto en el icono de la cabecera indica que está sonando. Con *Añadir a la cola* puedes encadenar canciones: cuando termina una, suena la siguiente automáticamente (las listas avanzan solas y pasan a la cola al acabar la última). YouTube puede mostrar anuncios dentro del reproductor, y la aplicación no puede eliminarlos.
 
 ### Atajos de teclado
 
@@ -89,6 +90,8 @@ El icono de nota musical abre un reproductor flotante: pega el enlace de un víd
 **¿Por qué no veo las animaciones?** Si tu sistema tiene activada la reducción de movimiento, AstraTime la respeta y las desactiva. Ajustes lo indica con un aviso y explica cómo cambiarlo. También puedes desactivarlas tú con *Reducir animaciones*.
 
 **¿Suena el aviso con la pantalla bloqueada?** Depende del navegador: los móviles pueden frenar las pestañas en segundo plano. El tiempo se calcula bien, pero el aviso puede retrasarse. Con la aplicación cerrada no hay avisos.
+
+**¿Se corta la música al cerrar la ventana del reproductor?** No. Cerrar o minimizar solo oculta la ventana; la música sigue hasta que la pauses o la detengas. Si recargas o cierras la página, se detiene (el navegador la descarga).
 
 **¿Los sonidos tienen derechos de autor?** No: se generan en el dispositivo con la Web Audio API. La aplicación no incluye archivos de audio.
 
@@ -171,4 +174,10 @@ Se verificó con pruebas automatizadas de extremo a extremo en Chromium sin inte
 
 Este proyecto se publica bajo la **licencia MIT** (archivo [`LICENSE`](LICENSE)). En palabras sencillas: cualquier persona puede usar, copiar, modificar y compartir el código, también en proyectos propios o comerciales, siempre que conserve el aviso de copyright y la licencia. El software se ofrece "tal cual", sin garantía de ningún tipo.
 
-La tipografía Space Grotesk conserva su propia licencia (SIL Open Font License 1.1), incluida en `fonts/`.
+**Tipografía.** Space Grotesk se distribuye con la licencia SIL Open Font License 1.1, que permite usarla, incluirla en aplicaciones y webs y redistribuirla, también con fines comerciales. Su condición es conservar el aviso de copyright y la licencia junto a la fuente (están en `fonts/OFL-Space-Grotesk.txt`) y no vender la fuente por sí sola.
+
+**Otros recursos.** Los logotipos e iconos son propios y los sonidos se generan por código. Google Identity Services, la API de Google Drive y el reproductor de YouTube son servicios de terceros que solo se usan a petición de la persona usuaria y se rigen por sus propias condiciones.
+
+## Aviso sobre marcas
+
+Pomodoro® y Pomodoro Technique® son marcas registradas de Francesco Cirillo. AstraTime es un proyecto independiente: no está afiliado a su titular ni cuenta con su respaldo, y no utiliza esas marcas en su nombre.

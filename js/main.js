@@ -53,6 +53,7 @@ const refresh = debounce(() => {
   plans.renderStrip();
   plans.renderPresetMenu();
   plans.renderPresetSettings();
+  tasks.renderTagOptions();
   tasks.render();
   renderView();
   refreshOpenDay();
@@ -127,7 +128,6 @@ function bindStatic() {
   $('#imm-exit').addEventListener('click', () => setImmersive(false));
 
   $('#q-repeat').addEventListener('click', () => { if (!timer.repeatLast()) toast('Todavía no hay sesiones que repetir.'); });
-  $('#q-tag').addEventListener('click', () => { timer.nextTag(); announce(`Etiqueta: ${db.cfg.tag}`); });
   const presetPopover = bindPopover($('#q-presets'), $('#pop-presets'), plans.renderPresetMenu);
   $('#preset-menu').addEventListener('click', (e) => {
     const item = e.target.closest('button');
@@ -187,7 +187,13 @@ function start() {
   on('phase:end', alertPhaseEnd);
   on('plan:begin', () => { timer.startPlanned(); showView('timer'); });
   on('plan:done', (name) => toast(`Plan completado${name ? `: ${name}` : ''}.`));
-  on('task:select', (task) => { if (task.tag !== db.cfg.tag) timer.setTag(task.tag); });
+  on('task:select', (task) => {
+    if (task.tag !== db.cfg.tag) timer.setTag(task.tag);
+    const minutes = timer.loadTaskTime(task);
+    if (minutes) toast(`Temporizador listo: ${minutes} min · ${task.title}`);
+    else timer.clearTaskTime(); // una tarea sin tiempo asignado no hereda el de la anterior
+  });
+  on('task:deselect', () => timer.clearTaskTime());
   on('wipe', timer.afterWipe);
   for (const key of ['ses', 'tasks', 'plan', 'presets', 'cfg', 'badges']) on(`change:${key}`, refresh);
 

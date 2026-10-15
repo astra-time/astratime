@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <meta name="description" content="AstraTime: temporizador Pomodoro con registro de horas de estudio, etiquetas, planes por bloques y estadísticas.">
+  <meta name="description" content="AstraTime: temporizador de enfoque con registro de horas de estudio, etiquetas, planes por bloques y estadísticas.">
   <title>AstraTime</title>
   <link rel="manifest" href="manifest.json">
   <link id="favicon" rel="icon" type="image/svg+xml" href="icons/icon.svg">
@@ -53,6 +53,7 @@
 
       <div class="ring" id="ring">
         <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle class="ring-fill" cx="110" cy="110" r="100"/>
           <circle cx="110" cy="110" r="108.5" fill="none" class="orbit" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="1 9"/>
           <circle cx="110" cy="110" r="100" fill="none" class="ring-track" stroke-width="6"/>
           <circle id="arc" cx="110" cy="110" r="100" fill="none" class="ring-arc" stroke-width="6" stroke-linecap="round" stroke-dasharray="628.32" stroke-dashoffset="628.32"/>
@@ -71,7 +72,6 @@
 
       <div class="quick" aria-label="Acciones rápidas">
         <button class="pill sm" id="q-repeat" type="button"><span data-icon="repeat" data-size="16"></span>Repetir última</button>
-        <button class="pill sm" id="q-tag" type="button"><span data-icon="swap" data-size="16"></span>Cambiar etiqueta</button>
         <button class="pill sm" id="q-presets" type="button" aria-haspopup="menu" aria-expanded="false"><span data-icon="list" data-size="16"></span>Presets</button>
       </div>
 
@@ -79,10 +79,13 @@
         <summary>Tareas<span class="sub" id="tasks-h"></span></summary>
         <div class="accb">
           <ul class="tasks" id="task-list"></ul>
-          <form class="addrow" id="task-form">
+          <form class="taskform" id="task-form">
             <input type="text" id="task-title" maxlength="80" placeholder="Nueva tarea" aria-label="Título de la tarea" required>
-            <input type="number" id="task-est" min="0" max="600" inputmode="numeric" placeholder="Min" aria-label="Minutos estimados">
-            <button class="b" type="submit">Añadir</button>
+            <div class="taskrow">
+              <select id="task-tag" aria-label="Etiqueta de la tarea"></select>
+              <input type="number" id="task-est" min="0" max="600" inputmode="numeric" placeholder="Min" aria-label="Minutos asignados">
+              <button class="b" type="submit">Añadir</button>
+            </div>
           </form>
         </div>
       </details>
@@ -256,12 +259,12 @@
   <button class="pill imm-exit" id="imm-exit" type="button" hidden>Salir del modo inmersivo</button>
 
   <!-- Reproductor de YouTube -->
-  <aside class="yt" id="yt" hidden aria-label="Reproductor de YouTube">
+  <aside class="yt is-hidden" id="yt" inert aria-hidden="true" aria-label="Reproductor de YouTube">
     <header>
       <b>Reproductor</b>
       <span>
-        <button class="ib sm" id="yt-min" type="button" aria-label="Minimizar (la música sigue sonando)"></button>
-        <button class="ib sm" id="yt-close" type="button" aria-label="Cerrar y detener la reproducción"></button>
+        <button class="ib sm" id="yt-min" type="button" aria-label="Minimizar"></button>
+        <button class="ib sm" id="yt-close" type="button" aria-label="Ocultar (la música sigue sonando)"></button>
       </span>
     </header>
     <div class="yt-main">
@@ -271,17 +274,23 @@
         <div class="yt-ctl" id="yt-ctl">
           <button class="ib sm" id="yt-prev" type="button" aria-label="Anterior" hidden></button>
           <button class="ib sm" id="yt-toggle" type="button" aria-label="Reproducir"></button>
-          <button class="ib sm" id="yt-next" type="button" aria-label="Siguiente" hidden></button>
+          <button class="ib sm" id="yt-stop" type="button" aria-label="Detener"></button>
+          <button class="ib sm" id="yt-next" type="button" aria-label="Siguiente"></button>
         </div>
       </div>
     </div>
     <div class="yt-body">
-      <form id="yt-form" class="addrow">
+      <form id="yt-form" class="taskform">
         <input type="url" id="yt-url" placeholder="Enlace de vídeo o lista" aria-label="URL de YouTube o YouTube Music" required>
-        <button class="b" type="submit">Cargar</button>
+        <div class="ytrow">
+          <button class="b main" type="submit">Reproducir ahora</button>
+          <button class="b" id="yt-enqueue" type="button">Añadir a la cola</button>
+        </div>
       </form>
       <div class="msg" id="yt-msg" role="status"></div>
-      <p class="sub">Minimizar mantiene la reproducción; cerrar o pausar la detiene. YouTube puede mostrar anuncios, y algunos vídeos no permiten su reproducción incrustada.</p>
+      <div class="yt-qhead"><b>Cola</b><span class="sub" id="yt-qcount"></span></div>
+      <ul class="yt-queue" id="yt-queue"></ul>
+      <p class="sub">Ocultar o minimizar no detiene la música; solo la pausa o el botón de detener. Al terminar una canción suena la siguiente de la cola. YouTube puede mostrar anuncios y algunos vídeos no permiten su reproducción incrustada.</p>
     </div>
   </aside>
 

@@ -1,7 +1,7 @@
 {
   "name": "AstraTime",
   "short_name": "AstraTime",
-  "description": "Temporizador Pomodoro con registro de horas de estudio, etiquetas y estadísticas.",
+  "description": "Temporizador de enfoque con registro de horas de estudio, etiquetas y estadísticas.",
   "lang": "es",
   "id": "./",
   "start_url": "./",
